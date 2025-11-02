@@ -1,3 +1,4 @@
+/* Global Styles */
 * {
     margin: 0;
     padding: 0;
@@ -69,6 +70,7 @@ body {
     padding: 30px;
     flex: 1;
     background-color: #ffffff;
+    width: 100%;
 }
 
 .page-header {
@@ -255,6 +257,7 @@ body {
     color: #1976D2;
     text-decoration: none;
     transition: all 0.2s;
+    cursor: pointer;
 }
 
 .dropdown-menu a:hover {
