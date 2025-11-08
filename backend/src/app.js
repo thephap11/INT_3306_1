@@ -1,5 +1,5 @@
-
 import "./config/dotenv.js";
+import "./config/database.js"; // Initialize database connection
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
@@ -18,6 +18,16 @@ app.use("/api/manager", managerRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
-app.get("/", (_, res) => res.json({ name: "football-management-backend" }));
+app.get("/", (_, res) => res.json({ 
+  name: "football-management-backend",
+  version: "0.1.0",
+  status: "running",
+  endpoints: {
+    auth: "/api/auth",
+    user: "/api/user",
+    admin: "/api/admin",
+    manager: "/api/manager"
+  }
+}));
 
 export default app;

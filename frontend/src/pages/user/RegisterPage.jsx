@@ -1,18 +1,21 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { authAPI } from '../../services/api'
 import './RegisterPage.css'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    fullName: '',
+    person_name: '',
     email: '',
     phone: '',
+    username: '',
     password: '',
     confirmPassword: ''
   })
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -21,36 +24,51 @@ export default function RegisterPage() {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess(false)
+    setLoading(true)
 
     // Validation
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword) {
+    if (!formData.person_name || !formData.email || !formData.phone || !formData.username || !formData.password || !formData.confirmPassword) {
       setError('Vui lòng điền đầy đủ thông tin')
+      setLoading(false)
       return
     }
 
     if (formData.password.length < 6) {
       setError('Mật khẩu phải có ít nhất 6 ký tự')
+      setLoading(false)
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Mật khẩu xác nhận không khớp')
+      setLoading(false)
       return
     }
 
-    // Demo registration - sẽ thay bằng API call sau
-    console.log('Register data:', formData)
-    
-    setSuccess(true)
-    
-    // Chuyển hướng sau 2 giây
-    setTimeout(() => {
-      navigate('/user/login')
-    }, 2000)
+    try {
+      const { confirmPassword, ...registerData } = formData
+      const response = await authAPI.register(registerData)
+      
+      if (response.success) {
+        setSuccess(true)
+        
+        // Chuyển hướng sau 2 giây
+        setTimeout(() => {
+          navigate('/user/login')
+        }, 2000)
+      } else {
+        setError(response.message || 'Đăng ký thất bại')
+      }
+    } catch (err) {
+      console.error('Register error:', err)
+      setError(err.message || 'Có lỗi xảy ra khi đăng ký')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -67,15 +85,30 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="fullName">Họ và tên</label>
+              <label htmlFor="person_name">Họ và tên</label>
               <input
-                id="fullName"
+                id="person_name"
                 type="text"
-                name="fullName"
-                value={formData.fullName}
+                name="person_name"
+                value={formData.person_name}
                 onChange={handleChange}
                 placeholder="Nhập họ và tên đầy đủ"
                 required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="username">Username</label>
+              <input
+                id="username"
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Nhập username (3-45 ký tự)"
+                required
+                disabled={loading}
               />
             </div>
 
@@ -89,6 +122,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="Nhập email của bạn"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -100,8 +134,9 @@ export default function RegisterPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Nhập số điện thoại"
+                placeholder="Nhập số điện thoại (10 chữ số)"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -115,6 +150,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -128,12 +164,13 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="Nhập lại mật khẩu"
                 required
+                disabled={loading}
               />
             </div>
 
             <div className="form-checkbox">
               <label>
-                <input type="checkbox" required />
+                <input type="checkbox" required disabled={loading} />
                 <span>
                   Tôi đồng ý với <Link to="/terms">Điều khoản dịch vụ</Link> và{' '}
                   <Link to="/privacy">Chính sách bảo mật</Link>
@@ -141,8 +178,8 @@ export default function RegisterPage() {
               </label>
             </div>
 
-            <button type="submit" className="auth-submit-btn">
-              Đăng ký
+            <button type="submit" className="auth-submit-btn" disabled={loading}>
+              {loading ? 'Đang đăng ký...' : 'Đăng ký'}
             </button>
           </form>
 
@@ -157,10 +194,10 @@ export default function RegisterPage() {
           </div>
 
           <div className="social-login">
-            <button className="social-btn google">
+            <button className="social-btn google" disabled={loading}>
               <span>🔍</span> Google
             </button>
-            <button className="social-btn facebook">
+            <button className="social-btn facebook" disabled={loading}>
               <span>f</span> Facebook
             </button>
           </div>
