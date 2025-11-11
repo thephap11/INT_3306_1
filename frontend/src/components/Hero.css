@@ -1,0 +1,4 @@
+.hero { padding: 2rem 0; background: linear-gradient(90deg,#0ea5a4, #06b6d4); color: white; }
+.hero-inner { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+.hero-title { margin: 0; font-size: 2rem; }
+.hero-subtitle { margin: 0.5rem 0 0; opacity: 0.95; }

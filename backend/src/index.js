@@ -27,6 +27,8 @@ app.use(express.json());
 app.use('/api/admin', adminRoutes);
 app.use('/api/manager', managerRoutes);
 app.use('/api/users', userRoutes);
+// also accept singular /api/user to be compatible with ESM server mounting
+app.use('/api/user', userRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 app.get('/', (req, res) => {
