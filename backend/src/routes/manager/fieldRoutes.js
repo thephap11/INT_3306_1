@@ -1,8 +1,9 @@
 import express from "express";
-import { getFields } from "../../controllers/manager/fieldController.js";
+import { getAllFields } from "../../controllers/manager/fieldController.js";
 
 const router = express.Router();
 
-router.get("/", getFields);
+// GET /api/manager/fields
+router.get("/", getAllFields);
 
 export default router;

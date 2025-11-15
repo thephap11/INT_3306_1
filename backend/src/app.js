@@ -3,6 +3,7 @@ import db from "./config/db.js";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import fieldRoutes from "./routes/manager/fieldRoutes.js";
 
 // manager
 import managerFieldRoutes from "./routes/manager/fieldRoutes.js";
