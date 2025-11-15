@@ -1,3 +1,3 @@
-
-// Create/cancel bookings, list
-export const ping = (req, res) => res.json({ ok: true, from: "bookingController.js" });
+export const getBookings = async (req, res) => {
+  res.json({ message: "Danh sách yêu cầu đặt sân (manager)" });
+};

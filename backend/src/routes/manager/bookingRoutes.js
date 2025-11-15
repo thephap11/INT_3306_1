@@ -1,8 +1,8 @@
-const express = require("express");
+import express from "express";
+import { getBookings } from "../../controllers/manager/bookingController.js";
+
 const router = express.Router();
-const authMiddleware = require("../../middleware/authMiddleware");
-const bookingController = require("../controllers/bookingController");
 
-// Booking routes here
+router.get("/", getBookings);
 
-module.exports = router;
+export default router;
