@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
-import ApiClient from '../../services/api'
+import ApiClient, { authAPI } from '../../services/api'
 import './ReviewPage.css'
 
 export default function ReviewPage() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const fieldIdFromUrl = searchParams.get('fieldId')
 
   const [fields, setFields] = useState([])
@@ -89,6 +90,14 @@ export default function ReviewPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Kiểm tra đăng nhập
+    if (!authAPI.isAuthenticated()) {
+      if (window.confirm('Bạn cần đăng nhập để gửi đánh giá. Chuyển đến trang đăng nhập?')) {
+        navigate('/user/login')
+      }
+      return
+    }
+
     if (!selectedField) {
       alert('Vui lòng chọn sân cần đánh giá')
       return
@@ -116,8 +125,12 @@ export default function ReviewPage() {
           formData.append('images', image)
         })
         
+        const token = localStorage.getItem('token')
         const uploadRes = await fetch('http://localhost:5000/api/user/reviews/upload', {
           method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
           body: formData
         })
         
@@ -129,10 +142,13 @@ export default function ReviewPage() {
         imageUrls = uploadData.images || []
       }
       
+      // Get current user info
+      const currentUser = authAPI.getCurrentUser()
+      
       // Create review with image URLs
       const reviewData = {
         field_id: Number(selectedField),
-        customer_id: 1, // TODO: Get from auth
+        customer_id: currentUser?.person_id || 1,
         rating,
         comment: comment.trim(),
         images: imageUrls

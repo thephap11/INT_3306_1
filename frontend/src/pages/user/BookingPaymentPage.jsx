@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
-import ApiClient from '../../services/api'
+import ApiClient, { authAPI } from '../../services/api'
 import './BookingPaymentPage.css'
 
 export default function BookingPaymentPage() {
@@ -57,11 +57,21 @@ export default function BookingPaymentPage() {
   const handlePayment = async (e) => {
     e.preventDefault()
     
+    // Kiểm tra đăng nhập
+    if (!authAPI.isAuthenticated()) {
+      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại')
+      navigate('/user/login')
+      return
+    }
+    
     try {
       if (isNewBooking) {
+        // Get current user info
+        const currentUser = authAPI.getCurrentUser()
+        
         // Booking mới: Tạo booking trong DB lần đầu
         const bookingPayload = {
-          customer_id: booking.customer_id,
+          customer_id: currentUser?.person_id || booking.customer_id,
           field_id: booking.field_id,
           start_time: booking.start_time,
           end_time: booking.end_time,

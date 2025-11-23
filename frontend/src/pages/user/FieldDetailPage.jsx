@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
-import ApiClient from '../../services/api'
+import ApiClient, { authAPI } from '../../services/api'
 import './FieldDetailPage.css'
 
 export default function FieldDetailPage() {
@@ -60,7 +60,7 @@ export default function FieldDetailPage() {
         end_time: slot.end_time
       })
     })
-    return Object.values(grouped).slice(0, 4) // Show first 4 days
+    return Object.values(grouped).slice(0, 4)
   })() : []
 
   const reviews = [
@@ -78,6 +78,14 @@ export default function FieldDetailPage() {
   const handleBookingSubmit = async (e) => {
     e.preventDefault()
     
+
+    if (!authAPI.isAuthenticated()) {
+      if (window.confirm('Bạn cần đăng nhập để đặt sân. Chuyển đến trang đăng nhập?')) {
+        navigate('/user/login')
+      }
+      return
+    }
+    
     if (!selectedTime) {
       alert('Vui lòng chọn khung giờ đặt sân')
       return
@@ -88,15 +96,16 @@ export default function FieldDetailPage() {
       return
     }
 
-    // Chưa tạo booking trong DB, chỉ lưu thông tin tạm và chuyển sang trang thanh toán
+    const currentUser = authAPI.getCurrentUser()
+
     const bookingData = {
-      customer_id: 1, // TODO: Lấy từ auth user thực tế
+      customer_id: currentUser?.person_id || 1,
       field_id: Number(field.field_id),
       field_name: field.field_name,
       location: field.location,
       start_time: selectedTime.timeSlot.start_time,
       end_time: selectedTime.timeSlot.end_time,
-      price: 1200000, // Giá mặc định 1,200,000 VNĐ cho 2 giờ
+      price: 1200000,
       customer_name: bookingForm.name,
       customer_email: bookingForm.email,
       customer_phone: bookingForm.phone,
@@ -106,7 +115,6 @@ export default function FieldDetailPage() {
     // Lưu vào localStorage để trang thanh toán sử dụng
     localStorage.setItem('pendingBooking', JSON.stringify(bookingData))
     
-    // Chuyển sang trang thanh toán
     navigate('/user/booking')
   }
 

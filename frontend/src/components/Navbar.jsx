@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { authAPI } from '../services/api'
 import './Navbar.css'
 
 export default function Navbar() {
@@ -9,16 +10,36 @@ export default function Navbar() {
 
   useEffect(() => {
     // Kiểm tra user đã đăng nhập chưa
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
+    const checkAuth = () => {
+      const storedUser = localStorage.getItem('user')
+      const token = localStorage.getItem('token')
+      
+      // Chỉ set user nếu có cả user và token
+      if (storedUser && token) {
+        setUser(JSON.parse(storedUser))
+      } else {
+        setUser(null)
+      }
+    }
+    
+    checkAuth()
+    
+    // Listen for storage changes (logout từ tab khác)
+    window.addEventListener('storage', checkAuth)
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth)
     }
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('user')
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout() // Xóa tất cả token và user
+    } catch (err) {
+      console.error('Logout error:', err)
+    }
     setUser(null)
-    navigate('/')
+    navigate('/user/login')
   }
 
   return (

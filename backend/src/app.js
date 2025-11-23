@@ -25,6 +25,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/manager", managerRoutes);
 app.use("/api/user", userRoutes);
 // also support legacy plural route to avoid 404s from clients using /api/users
+app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 

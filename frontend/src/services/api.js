@@ -72,8 +72,9 @@ class ApiClient {
           // Retry original request with new token
           return this.request(endpoint, options);
         } else {
-          // Refresh failed, logout user
+          // Refresh failed, clear all auth data and redirect to login
           this.clearTokens();
+          localStorage.removeItem('user');
           window.location.href = '/user/login';
           throw new Error('Session expired');
         }
@@ -190,8 +191,12 @@ export const authAPI = {
   logout: async () => {
     try {
       await apiClient.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout API error:', err);
     } finally {
+      // Always clear all auth data
       apiClient.clearTokens();
+      localStorage.removeItem('user');
     }
   },
 
@@ -200,9 +205,11 @@ export const authAPI = {
     return apiClient.get('/auth/me');
   },
 
-  // Check if user is authenticated
+  // Check if user is authenticated (checks both token and user exist)
   isAuthenticated: () => {
-    return !!apiClient.getToken();
+    const token = apiClient.getToken();
+    const user = localStorage.getItem('user');
+    return !!(token && user);
   },
 
   // Get current user from localStorage
