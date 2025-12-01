@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authAPI } from '../../services/api'
+import { showSuccess, showError } from '../../components/Toast'
+import ToastContainer from '../../components/Toast'
 import './LoginPage.css'
 
 export default function LoginPage() {
@@ -37,23 +39,26 @@ export default function LoginPage() {
       if (response.success) {
         const user = response.data.user
         
-        // Redirect based on role
+        // Dispatch custom event to update RoleSwitcher
+        window.dispatchEvent(new Event('userUpdated'));
+        
+        // Show success toast based on role
         if (user.role === 'admin') {
-          alert('Đăng nhập thành công với quyền Admin!')
+          showSuccess(`🎉 Chào mừng Admin ${user.username}! Đăng nhập thành công`)
           navigate('/admin/dashboard')
         } else if (user.role === 'manager') {
-          alert('Đăng nhập thành công với quyền Manager!')
+          showSuccess(`👔 Chào mừng Manager ${user.username}! Đăng nhập thành công`)
           navigate('/manager/bookings')
         } else {
-          alert('Đăng nhập thành công!')
+          showSuccess(`👋 Xin chào ${user.username}! Đăng nhập thành công`)
           navigate('/user')
         }
       } else {
-        setError(response.message || 'Đăng nhập thất bại')
+        showError(response.message || 'Đăng nhập thất bại')
       }
     } catch (err) {
       console.error('Login error:', err)
-      setError(err.message || 'Có lỗi xảy ra khi đăng nhập')
+      showError(err.message || 'Có lỗi xảy ra khi đăng nhập')
     } finally {
       setLoading(false)
     }
@@ -61,6 +66,7 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
+      <ToastContainer />
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">

@@ -36,6 +36,7 @@ export default function Navbar() {
       console.error('Logout error:', err)
     }
     setUser(null)
+    window.dispatchEvent(new Event('userUpdated'));
     navigate('/user/login')
   }
 

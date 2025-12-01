@@ -18,6 +18,9 @@ function BookingManagementPage() {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, booking: null, action: null });
+    const [cancelReason, setCancelReason] = useState('');
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [bookingToCancel, setBookingToCancel] = useState(null);
 
     useEffect(() => {
         fetchBookings();
@@ -63,7 +66,7 @@ function BookingManagementPage() {
 
     const handleUpdateStatus = async (status) => {
         try {
-            await updateBookingStatus(confirmDialog.booking.booking_id, status);
+            await updateBookingStatus(confirmDialog.booking.booking_id, status, 'Xác nhận bởi admin');
             showSuccess('Cập nhật trạng thái thành công');
             setConfirmDialog({ isOpen: false, booking: null, action: null });
             fetchBookings();
@@ -73,11 +76,24 @@ function BookingManagementPage() {
         }
     };
 
-    const handleCancel = async () => {
+    const handleOpenCancelModal = (booking) => {
+        setBookingToCancel(booking);
+        setIsCancelModalOpen(true);
+        setCancelReason('');
+    };
+
+    const handleCancelBooking = async () => {
+        if (!cancelReason.trim()) {
+            showError('Vui lòng nhập lý do hủy');
+            return;
+        }
+        
         try {
-            await cancelBooking(confirmDialog.booking.booking_id);
+            await cancelBooking(bookingToCancel.booking_id, cancelReason.trim());
             showSuccess('Hủy đặt sân thành công');
-            setConfirmDialog({ isOpen: false, booking: null, action: null });
+            setIsCancelModalOpen(false);
+            setBookingToCancel(null);
+            setCancelReason('');
             fetchBookings();
             fetchStats();
         } catch (error) {
@@ -139,12 +155,66 @@ function BookingManagementPage() {
 
     const actions = (booking) => (
         <>
-            <button onClick={() => handleViewDetail(booking)} style={{ padding: '6px 12px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>👁️ Xem</button>
+            <button 
+                onClick={() => handleViewDetail(booking)} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+            >
+                👁️ Xem
+            </button>
             {booking.status === 'pending' && (
-                <button onClick={() => setConfirmDialog({ isOpen: true, booking, action: 'confirm' })} style={{ padding: '6px 12px', background: '#10b981', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>✅</button>
+                <button 
+                    onClick={() => setConfirmDialog({ isOpen: true, booking, action: 'confirm' })} 
+                    style={{ 
+                        padding: '8px 14px', 
+                        background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '8px', 
+                        cursor: 'pointer', 
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                    ✅ Xác nhận
+                </button>
             )}
             {(booking.status === 'pending' || booking.status === 'confirmed') && (
-                <button onClick={() => setConfirmDialog({ isOpen: true, booking, action: 'cancel' })} style={{ padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>❌</button>
+                <button 
+                    onClick={() => handleOpenCancelModal(booking)} 
+                    style={{ 
+                        padding: '8px 14px', 
+                        background: 'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '8px', 
+                        cursor: 'pointer', 
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                    ❌ Hủy
+                </button>
             )}
         </>
     );
@@ -215,12 +285,131 @@ function BookingManagementPage() {
             <ConfirmDialog
                 isOpen={confirmDialog.isOpen}
                 onClose={() => setConfirmDialog({ isOpen: false, booking: null, action: null })}
-                onConfirm={() => confirmDialog.action === 'confirm' ? handleUpdateStatus('confirmed') : handleCancel()}
-                title={confirmDialog.action === 'confirm' ? 'Xác nhận đặt sân' : 'Hủy đặt sân'}
-                message={confirmDialog.action === 'confirm' ? 'Bạn có chắc chắn muốn xác nhận đặt sân này?' : 'Bạn có chắc chắn muốn hủy đặt sân này?'}
-                confirmText={confirmDialog.action === 'confirm' ? 'Xác nhận' : 'Hủy'}
-                type={confirmDialog.action === 'confirm' ? 'info' : 'danger'}
+                onConfirm={() => handleUpdateStatus('confirmed')}
+                title="Xác nhận đặt sân"
+                message="Bạn có chắc chắn muốn xác nhận đặt sân này? Khách hàng sẽ nhận được thông báo xác nhận."
+                confirmText="Xác nhận"
+                type="success"
             />
+
+            {/* Cancel Booking Modal */}
+            <Modal 
+                isOpen={isCancelModalOpen} 
+                onClose={() => {
+                    setIsCancelModalOpen(false);
+                    setBookingToCancel(null);
+                    setCancelReason('');
+                }} 
+                title="Hủy đặt sân"
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div style={{ 
+                        padding: '16px', 
+                        background: '#fee2e2', 
+                        borderRadius: '8px',
+                        borderLeft: '4px solid #dc2626'
+                    }}>
+                        <p style={{ margin: 0, color: '#991b1b', fontSize: '14px', fontWeight: '500' }}>
+                            ⚠️ Bạn đang hủy đặt sân #{bookingToCancel?.booking_id}
+                        </p>
+                    </div>
+
+                    <div>
+                        <label style={{ 
+                            display: 'block', 
+                            marginBottom: '8px', 
+                            fontWeight: '600',
+                            color: '#374151',
+                            fontSize: '14px'
+                        }}>
+                            Lý do hủy <span style={{ color: '#dc2626' }}>*</span>
+                        </label>
+                        <textarea
+                            value={cancelReason}
+                            onChange={(e) => setCancelReason(e.target.value)}
+                            placeholder="Vui lòng nhập lý do hủy đặt sân (ví dụ: khách yêu cầu hủy, thời tiết xấu, sân bảo trì...)"
+                            rows="4"
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                border: '2px solid #e5e7eb',
+                                borderRadius: '8px',
+                                fontSize: '14px',
+                                fontFamily: 'inherit',
+                                resize: 'vertical',
+                                outline: 'none',
+                                transition: 'border-color 0.2s',
+                                boxSizing: 'border-box'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                            onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                        />
+                        <p style={{ 
+                            margin: '8px 0 0 0', 
+                            fontSize: '12px', 
+                            color: '#6b7280' 
+                        }}>
+                            Lý do hủy sẽ được gửi đến khách hàng
+                        </p>
+                    </div>
+
+                    <div style={{ 
+                        display: 'flex', 
+                        gap: '12px', 
+                        justifyContent: 'flex-end',
+                        paddingTop: '12px',
+                        borderTop: '1px solid #e5e7eb'
+                    }}>
+                        <button
+                            onClick={() => {
+                                setIsCancelModalOpen(false);
+                                setBookingToCancel(null);
+                                setCancelReason('');
+                            }}
+                            style={{
+                                padding: '10px 20px',
+                                background: '#f3f4f6',
+                                color: '#374151',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => e.target.style.background = '#e5e7eb'}
+                            onMouseLeave={(e) => e.target.style.background = '#f3f4f6'}
+                        >
+                            Đóng
+                        </button>
+                        <button
+                            onClick={handleCancelBooking}
+                            style={{
+                                padding: '10px 20px',
+                                background: 'linear-gradient(135deg, #eb3349 0%, #f45c43 100%)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.transform = 'translateY(-2px)';
+                                e.target.style.boxShadow = '0 4px 12px rgba(239, 68, 68, 0.4)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = '0 2px 8px rgba(239, 68, 68, 0.3)';
+                            }}
+                        >
+                            ❌ Xác nhận hủy
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 }

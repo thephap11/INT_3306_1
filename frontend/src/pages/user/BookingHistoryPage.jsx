@@ -286,21 +286,12 @@ export default function BookingHistoryPage() {
                       Xem chi tiết
                     </button>
                     
-                    {canCancel && !isPast && (
+                    {canCancel && isPast && (
                       <button
                         onClick={() => handleCancelBooking(booking.booking_id)}
                         className="btn-cancel"
                       >
                         Hủy đặt sân
-                      </button>
-                    )}
-
-                    {booking.status === 'confirmed' && !isPast && (
-                      <button
-                        onClick={() => navigate(`/user/booking?id=${booking.booking_id}`)}
-                        className="btn-payment"
-                      >
-                        Thanh toán
                       </button>
                     )}
                   </div>

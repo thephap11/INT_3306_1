@@ -23,8 +23,6 @@ export const getFieldByIdService = async (id) => {
       replacements: [id]
     });
 
-    console.log("Kết quả truy vấn:", rows); // <— thêm log này
-
     return rows[0] || null;
   } catch (err) {
     console.error("🔥 Lỗi SQL:", err);

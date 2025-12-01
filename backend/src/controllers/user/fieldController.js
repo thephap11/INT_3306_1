@@ -91,8 +91,6 @@ export const createBooking = async (req, res) => {
   try {
     const { customer_id, field_id, start_time, end_time, price, note } = req.body;
     
-    console.log('Received booking data:', req.body);
-    
     if (!customer_id) {
       return res.status(400).json({ message: 'Missing customer_id' });
     }

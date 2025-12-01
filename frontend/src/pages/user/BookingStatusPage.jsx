@@ -211,17 +211,17 @@ export default function BookingStatusPage() {
               </button>
             )}
             
-            {booking?.status === 'confirmed' && (
+            {/* {booking?.status === 'confirmed' && (
               <button 
                 onClick={() => navigate('/user/booking?id=' + bookingId)} 
                 className="btn-payment"
               >
                 💳 Thanh toán
               </button>
-            )}
+            )} */}
 
             <button 
-              onClick={() => navigate('/user/fields')} 
+              onClick={() => navigate('/user/booking-history')} 
               className="btn-back"
             >
               ← Quay lại

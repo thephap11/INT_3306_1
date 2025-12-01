@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import RoleSwitcher from './components/RoleSwitcher.jsx'
 import UserHomePage from './pages/user/UserHomePage.jsx'
 import FieldsPage from './pages/user/FieldsPage.jsx'
 import FieldDetailPage from './pages/user/FieldDetailPage.jsx'
@@ -26,6 +27,7 @@ function App() {
   return (
     <>
       <Router>
+        <RoleSwitcher />
         <Routes>
           {/* User routes */}
           <Route path="/" element={<UserHomePage />} />

@@ -129,7 +129,6 @@ export const optionalAuth = async (req, res, next) => {
     }
   } catch (error) {
     // Silently fail for optional auth
-    console.log('Optional auth failed:', error.message);
   }
 
   next();
