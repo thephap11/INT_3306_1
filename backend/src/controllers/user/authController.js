@@ -2,15 +2,23 @@ import jwt from 'jsonwebtoken';
 import Person from '../../models/Person.js';
 
 // Generate JWT Token
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (user) => {
+  return jwt.sign({ 
+    id: user.person_id, 
+    username: user.username,
+    role: user.role 
+  }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
 
 // Generate Refresh Token
-const generateRefreshToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
+const generateRefreshToken = (user) => {
+  return jwt.sign({ 
+    id: user.person_id,
+    username: user.username,
+    role: user.role
+  }, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d'
   });
 };
@@ -70,8 +78,8 @@ export const register = async (req, res) => {
     });
 
     // Generate tokens
-    const token = generateToken(user.person_id);
-    const refreshToken = generateRefreshToken(user.person_id);
+    const token = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     res.status(201).json({
       success: true,
@@ -154,8 +162,8 @@ export const login = async (req, res) => {
     }
 
     // Generate tokens
-    const token = generateToken(user.person_id);
-    const refreshToken = generateRefreshToken(user.person_id);
+    const token = generateToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     res.status(200).json({
       success: true,
@@ -223,9 +231,18 @@ export const refreshToken = async (req, res) => {
     // Verify refresh token
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
 
+    // Get user from database
+    const user = await Person.findByPk(decoded.id);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
     // Generate new tokens
-    const newToken = generateToken(decoded.id);
-    const newRefreshToken = generateRefreshToken(decoded.id);
+    const newToken = generateToken(user);
+    const newRefreshToken = generateRefreshToken(user);
 
     res.status(200).json({
       success: true,

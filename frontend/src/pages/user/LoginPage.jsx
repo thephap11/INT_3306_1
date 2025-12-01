@@ -35,8 +35,19 @@ export default function LoginPage() {
       const response = await authAPI.login(formData)
       
       if (response.success) {
-        alert('Đăng nhập thành công!')
-        navigate('/user')
+        const user = response.data.user
+        
+        // Redirect based on role
+        if (user.role === 'admin') {
+          alert('Đăng nhập thành công với quyền Admin!')
+          navigate('/admin/dashboard')
+        } else if (user.role === 'manager') {
+          alert('Đăng nhập thành công với quyền Manager!')
+          navigate('/manager/bookings')
+        } else {
+          alert('Đăng nhập thành công!')
+          navigate('/user')
+        }
       } else {
         setError(response.message || 'Đăng nhập thất bại')
       }

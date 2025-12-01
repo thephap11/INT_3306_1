@@ -1,4 +1,4 @@
-import { DataTypes } from 'sequelize';
+﻿import { DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import sequelize from '../config/database.js';
 
@@ -14,11 +14,11 @@ const Person = sequelize.define('Person', {
     allowNull: false,
     validate: {
       notEmpty: {
-        msg: 'Tên không được để trống'
+        msg: 'TÃªn khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'
       },
       len: {
         args: [2, 50],
-        msg: 'Tên phải từ 2-50 ký tự'
+        msg: 'TÃªn pháº£i tá»« 2-50 kÃ½ tá»±'
       }
     }
   },
@@ -32,7 +32,7 @@ const Person = sequelize.define('Person', {
     validate: {
       isIn: {
         args: [['male', 'female', 'other', null]],
-        msg: 'Giới tính không hợp lệ'
+        msg: 'Giá»›i tÃ­nh khÃ´ng há»£p lá»‡'
       }
     }
   },
@@ -46,7 +46,7 @@ const Person = sequelize.define('Person', {
     unique: true,
     validate: {
       isEmail: {
-        msg: 'Email không hợp lệ'
+        msg: 'Email khÃ´ng há»£p lá»‡'
       }
     }
   },
@@ -56,7 +56,7 @@ const Person = sequelize.define('Person', {
     validate: {
       is: {
         args: /^[0-9]{10}$/,
-        msg: 'Số điện thoại phải có 10 chữ số'
+        msg: 'Sá»‘ Ä‘iá»‡n thoáº¡i pháº£i cÃ³ 10 chá»¯ sá»‘'
       }
     }
   },
@@ -66,11 +66,11 @@ const Person = sequelize.define('Person', {
     unique: true,
     validate: {
       notEmpty: {
-        msg: 'Username không được để trống'
+        msg: 'Username khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'
       },
       len: {
         args: [3, 45],
-        msg: 'Username phải từ 3-45 ký tự'
+        msg: 'Username pháº£i tá»« 3-45 kÃ½ tá»±'
       }
     }
   },
@@ -79,11 +79,11 @@ const Person = sequelize.define('Person', {
     allowNull: false,
     validate: {
       notEmpty: {
-        msg: 'Mật khẩu không được để trống'
+        msg: 'Máº­t kháº©u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng'
       },
       len: {
         args: [6, 255],
-        msg: 'Mật khẩu phải có ít nhất 6 ký tự'
+        msg: 'Máº­t kháº©u pháº£i cÃ³ Ã­t nháº¥t 6 kÃ½ tá»±'
       }
     }
   },
@@ -94,7 +94,7 @@ const Person = sequelize.define('Person', {
     validate: {
       isIn: {
         args: [['user', 'staff', 'manager', 'admin']],
-        msg: 'Role không hợp lệ'
+        msg: 'Role khÃ´ng há»£p lá»‡'
       }
     }
   },
@@ -105,7 +105,7 @@ const Person = sequelize.define('Person', {
     validate: {
       isIn: {
         args: [['active', 'inactive', 'banned']],
-        msg: 'Status không hợp lệ'
+        msg: 'Status khÃ´ng há»£p lá»‡'
       }
     }
   },
@@ -151,3 +151,4 @@ Person.prototype.toJSON = function() {
 };
 
 export default Person;
+export const User = Person;

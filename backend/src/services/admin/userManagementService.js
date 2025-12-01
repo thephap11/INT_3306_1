@@ -1,39 +1,55 @@
 import { User, Field, Booking } from '../../models/index.js';
 import { Op } from 'sequelize';
+import sequelize from '../../config/database.js';
 
 /**
  * Get all users with filters and pagination
  */
 export const getAllUsersService = async (filters = {}, pagination = {}) => {
   const { page = 1, limit = 10, search = '', role = '', status = '' } = { ...filters, ...pagination };
-  const offset = (page - 1) * limit;
+  const offset = (parseInt(page) - 1) * parseInt(limit);
 
-  const whereClause = {};
+  let whereConditions = [];
+  let queryParams = [];
   
   if (search) {
-    whereClause[Op.or] = [
-      { person_name: { [Op.like]: `%${search}%` } },
-      { email: { [Op.like]: `%${search}%` } },
-      { username: { [Op.like]: `%${search}%` } }
-    ];
+    whereConditions.push('(person_name LIKE ? OR email LIKE ? OR username LIKE ?)');
+    queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
   
-  if (role) whereClause.role = role;
-  if (status) whereClause.status = status;
+  if (role) {
+    whereConditions.push('role = ?');
+    queryParams.push(role);
+  }
+  
+  if (status) {
+    whereConditions.push('status = ?');
+    queryParams.push(status);
+  }
 
-  const { count, rows } = await User.findAndCountAll({
-    where: whereClause,
-    limit: parseInt(limit),
-    offset: parseInt(offset),
-    order: [['person_id', 'DESC']],
-    attributes: { exclude: ['password'] }
-  });
+  const whereClause = whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : '';
+
+  // Get total count
+  const [[{ total }]] = await sequelize.query(
+    `SELECT COUNT(*) as total FROM person ${whereClause}`,
+    { replacements: queryParams }
+  );
+
+  // Get users
+  const [rows] = await sequelize.query(
+    `SELECT person_id, person_name, birthday, sex, address, email, phone, username, role, status, fieldId
+     FROM person 
+     ${whereClause}
+     ORDER BY person_id DESC
+     LIMIT ? OFFSET ?`,
+    { replacements: [...queryParams, parseInt(limit), offset] }
+  );
 
   return {
     users: rows,
-    total: count,
+    total: parseInt(total),
     page: parseInt(page),
-    totalPages: Math.ceil(count / limit)
+    totalPages: Math.ceil(total / limit)
   };
 };
 
@@ -41,58 +57,126 @@ export const getAllUsersService = async (filters = {}, pagination = {}) => {
  * Get user by ID
  */
 export const getUserByIdService = async (id) => {
-  const user = await User.findByPk(id, {
-    attributes: { exclude: ['password'] },
-    include: [
-      {
-        model: Field,
-        as: 'managedFields',
-        attributes: ['field_id', 'field_name', 'location', 'status']
-      },
-      {
-        model: Booking,
-        as: 'bookings',
-        limit: 5,
-        order: [['start_time', 'DESC']],
-        include: [
-          {
-            model: Field,
-            as: 'field',
-            attributes: ['field_name']
-          }
-        ]
-      }
-    ]
-  });
+  const [[user]] = await sequelize.query(
+    `SELECT person_id, person_name, birthday, sex, address, email, phone, username, role, status, fieldId
+     FROM person 
+     WHERE person_id = ?`,
+    { replacements: [id] }
+  );
 
-  return user;
+  if (!user) return null;
+
+  // Get managed fields
+  const [managedFields] = await sequelize.query(
+    `SELECT field_id, field_name, location, status
+     FROM fields 
+     WHERE manager_id = ?`,
+    { replacements: [id] }
+  );
+
+  // Get recent bookings
+  const [bookings] = await sequelize.query(
+    `SELECT b.booking_id, b.start_time, b.end_time, b.status, b.price,
+            f.field_name
+     FROM bookings b
+     LEFT JOIN fields f ON b.field_id = f.field_id
+     WHERE b.customer_id = ?
+     ORDER BY b.start_time DESC
+     LIMIT 5`,
+    { replacements: [id] }
+  );
+
+  return {
+    ...user,
+    managedFields,
+    bookings
+  };
 };
 
 /**
  * Create new user
  */
 export const createUserService = async (userData) => {
-  const user = await User.create(userData);
-  const userObj = user.toJSON();
-  delete userObj.password;
-  return userObj;
+  const { person_name, email, username, password, role = 'user', status = 'active', phone, address, birthday, sex } = userData;
+  
+  const [result] = await sequelize.query(
+    `INSERT INTO person (person_name, email, username, password, role, status, phone, address, birthday, sex)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    { replacements: [person_name, email, username, password, role, status, phone, address, birthday, sex] }
+  );
+
+  const [[user]] = await sequelize.query(
+    `SELECT person_id, person_name, birthday, sex, address, email, phone, username, role, status, fieldId
+     FROM person WHERE person_id = ?`,
+    { replacements: [result.insertId] }
+  );
+
+  return user;
 };
 
 /**
  * Update user
  */
 export const updateUserService = async (id, userData) => {
-  const user = await User.findByPk(id);
+  const [[user]] = await sequelize.query(
+    'SELECT person_id FROM person WHERE person_id = ?',
+    { replacements: [id] }
+  );
+  
   if (!user) {
     throw new Error('User not found');
   }
 
-  // Don't allow password update through this method
-  delete userData.password;
+  const updates = [];
+  const params = [];
   
-  await user.update(userData);
-  const updatedUser = user.toJSON();
-  delete updatedUser.password;
+  if (userData.person_name) {
+    updates.push('person_name = ?');
+    params.push(userData.person_name);
+  }
+  if (userData.email) {
+    updates.push('email = ?');
+    params.push(userData.email);
+  }
+  if (userData.phone) {
+    updates.push('phone = ?');
+    params.push(userData.phone);
+  }
+  if (userData.address) {
+    updates.push('address = ?');
+    params.push(userData.address);
+  }
+  if (userData.role) {
+    updates.push('role = ?');
+    params.push(userData.role);
+  }
+  if (userData.status) {
+    updates.push('status = ?');
+    params.push(userData.status);
+  }
+  if (userData.birthday) {
+    updates.push('birthday = ?');
+    params.push(userData.birthday);
+  }
+  if (userData.sex) {
+    updates.push('sex = ?');
+    params.push(userData.sex);
+  }
+
+  if (updates.length > 0) {
+    params.push(id);
+    await sequelize.query(
+      `UPDATE person SET ${updates.join(', ')} WHERE person_id = ?`,
+      { replacements: params }
+    );
+  }
+
+  const [[updatedUser]] = await sequelize.query(
+    `SELECT person_id, person_name, birthday, sex, address, email, phone, username, role, status, fieldId
+     FROM person WHERE person_id = ?`,
+    { replacements: [id] }
+  );
+  
   return updatedUser;
 };
 
@@ -100,12 +184,20 @@ export const updateUserService = async (id, userData) => {
  * Delete user (soft delete - set status to inactive)
  */
 export const deleteUserService = async (id) => {
-  const user = await User.findByPk(id);
+  const [[user]] = await sequelize.query(
+    'SELECT person_id FROM person WHERE person_id = ?',
+    { replacements: [id] }
+  );
+  
   if (!user) {
     throw new Error('User not found');
   }
 
-  await user.update({ status: 'inactive' });
+  await sequelize.query(
+    "UPDATE person SET status = 'inactive' WHERE person_id = ?",
+    { replacements: [id] }
+  );
+  
   return { message: 'User deleted successfully' };
 };
 
@@ -113,13 +205,21 @@ export const deleteUserService = async (id) => {
  * Toggle user status
  */
 export const toggleUserStatusService = async (id) => {
-  const user = await User.findByPk(id);
+  const [[user]] = await sequelize.query(
+    'SELECT person_id, status FROM person WHERE person_id = ?',
+    { replacements: [id] }
+  );
+  
   if (!user) {
     throw new Error('User not found');
   }
 
   const newStatus = user.status === 'active' ? 'inactive' : 'active';
-  await user.update({ status: newStatus });
+  
+  await sequelize.query(
+    'UPDATE person SET status = ? WHERE person_id = ?',
+    { replacements: [newStatus, id] }
+  );
   
   return {
     message: `User status changed to ${newStatus}`,
@@ -131,22 +231,26 @@ export const toggleUserStatusService = async (id) => {
  * Get user statistics
  */
 export const getUserStatsService = async () => {
-  const totalUsers = await User.count();
-  const activeUsers = await User.count({ where: { status: 'active' } });
-  const inactiveUsers = await User.count({ where: { status: 'inactive' } });
+  const [[{ total }]] = await sequelize.query(
+    'SELECT COUNT(*) as total FROM person'
+  );
   
-  const usersByRole = await User.findAll({
-    attributes: [
-      'role',
-      [User.sequelize.fn('COUNT', User.sequelize.col('person_id')), 'count']
-    ],
-    group: ['role']
-  });
+  const [[{ active }]] = await sequelize.query(
+    "SELECT COUNT(*) as active FROM person WHERE status = 'active'"
+  );
+  
+  const [[{ inactive }]] = await sequelize.query(
+    "SELECT COUNT(*) as inactive FROM person WHERE status = 'inactive'"
+  );
+  
+  const [usersByRole] = await sequelize.query(
+    'SELECT role, COUNT(*) as count FROM person GROUP BY role'
+  );
 
   return {
-    total: totalUsers,
-    active: activeUsers,
-    inactive: inactiveUsers,
+    total: parseInt(total),
+    active: parseInt(active),
+    inactive: parseInt(inactive),
     byRole: usersByRole
   };
 };
