@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản Lý Người Dùng</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>⚽ Admin Panel</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Quản Lý Sân Bóng</a></li>
+                <li><a href="users.html" class="active">Quản Lý Người Dùng</a></li>
+                <li><a href="employees.html">Quản Lý Nhân Viên</a></li>
+                <li><a href="bookings.html">Quản Lý Đặt Sân</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Quản Lý Người Dùng</h1>
+                <button class="btn-primary" onclick="showAddUserModal()">+ Thêm Người Dùng</button>
+            </header>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Tổng Người Dùng</h3>
+                    <p class="stat-number">245</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Người Dùng Hoạt Động</h3>
+                    <p class="stat-number">198</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Người Dùng Mới (Tháng)</h3>
+                    <p class="stat-number">23</p>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="🔍 Tìm kiếm người dùng...">
+            </div>
+
+            <div class="list-container">
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Nguyễn Văn An</h3>
+                        <p>Email: nguyenvanan@email.com | SĐT: 0901234567</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Nguyễn Văn An')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Nguyễn Văn An')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Trần Thị Bình</h3>
+                        <p>Email: tranbinhn@email.com | SĐT: 0912345678</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Trần Thị Bình')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Trần Thị Bình')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Lê Văn Cường</h3>
+                        <p>Email: levancuong@email.com | SĐT: 0923456789</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Lê Văn Cường')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Lê Văn Cường')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Phạm Thị Dung</h3>
+                        <p>Email: phamthidung@email.com | SĐT: 0934567890</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Phạm Thị Dung')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Phạm Thị Dung')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Hoàng Văn Em</h3>
+                        <p>Email: hoangvanem@email.com | SĐT: 0945678901</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Hoàng Văn Em')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Hoàng Văn Em')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Vũ Thị Hoa</h3>
+                        <p>Email: vuthihoa@email.com | SĐT: 0956789012</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewUserInfo('Vũ Thị Hoa')">👤 Xem thông tin</a>
+                            <a href="#" onclick="deleteUser('Vũ Thị Hoa')">🗑️ Xóa người dùng</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

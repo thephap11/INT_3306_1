@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản Lý Nhân Viên</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>⚽ Admin Panel</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Quản Lý Sân Bóng</a></li>
+                <li><a href="users.html">Quản Lý Người Dùng</a></li>
+                <li><a href="employees.html" class="active">Quản Lý Nhân Viên</a></li>
+                <li><a href="bookings.html">Quản Lý Đặt Sân</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Quản Lý Nhân Viên</h1>
+                <button class="btn-primary" onclick="showAddEmployeeModal()">+ Thêm Nhân Viên</button>
+            </header>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Tổng Nhân Viên</h3>
+                    <p class="stat-number">28</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Nhân Viên Đang Làm</h3>
+                    <p class="stat-number">25</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Tổng Lương (Tháng)</h3>
+                    <p class="stat-number">185</p>
+                    <span style="font-size: 0.8em; color: #FFC107;">triệu VNĐ</span>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="🔍 Tìm kiếm nhân viên...">
+            </div>
+
+            <div class="list-container">
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Đỗ Văn Khoa</h3>
+                        <p>Chức vụ: Quản lý sân | SĐT: 0967890123</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewEmployeeInfo('Đỗ Văn Khoa')">👤 Xem thông tin</a>
+                            <a href="#" onclick="viewWorkTime('Đỗ Văn Khoa')">⏰ Thời gian làm việc</a>
+                            <a href="#" onclick="viewSalary('Đỗ Văn Khoa')">💵 Mức lương</a>
+                            <a href="#" onclick="deleteEmployee('Đỗ Văn Khoa')">🗑️ Xóa nhân viên</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Bùi Thị Mai</h3>
+                        <p>Chức vụ: Lễ tân | SĐT: 0978901234</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewEmployeeInfo('Bùi Thị Mai')">👤 Xem thông tin</a>
+                            <a href="#" onclick="viewWorkTime('Bùi Thị Mai')">⏰ Thời gian làm việc</a>
+                            <a href="#" onclick="viewSalary('Bùi Thị Mai')">💵 Mức lương</a>
+                            <a href="#" onclick="deleteEmployee('Bùi Thị Mai')">🗑️ Xóa nhân viên</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Ngô Văn Nam</h3>
+                        <p>Chức vụ: Bảo vệ | SĐT: 0989012345</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewEmployeeInfo('Ngô Văn Nam')">👤 Xem thông tin</a>
+                            <a href="#" onclick="viewWorkTime('Ngô Văn Nam')">⏰ Thời gian làm việc</a>
+                            <a href="#" onclick="viewSalary('Ngô Văn Nam')">💵 Mức lương</a>
+                            <a href="#" onclick="deleteEmployee('Ngô Văn Nam')">🗑️ Xóa nhân viên</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Đinh Thị Oanh</h3>
+                        <p>Chức vụ: Kế toán | SĐT: 0990123456</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewEmployeeInfo('Đinh Thị Oanh')">👤 Xem thông tin</a>
+                            <a href="#" onclick="viewWorkTime('Đinh Thị Oanh')">⏰ Thời gian làm việc</a>
+                            <a href="#" onclick="viewSalary('Đinh Thị Oanh')">💵 Mức lương</a>
+                            <a href="#" onclick="deleteEmployee('Đinh Thị Oanh')">🗑️ Xóa nhân viên</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="item-info">
+                        <h3>Lý Văn Phúc</h3>
+                        <p>Chức vụ: Bảo trì | SĐT: 0901234560</p>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-menu" onclick="toggleMenu(this)">⋮</button>
+                        <div class="dropdown-menu">
+                            <a href="#" onclick="viewEmployeeInfo('Lý Văn Phúc')">👤 Xem thông tin</a>
+                            <a href="#" onclick="viewWorkTime('Lý Văn Phúc')">⏰ Thời gian làm việc</a>
+                            <a href="#" onclick="viewSalary('Lý Văn Phúc')">💵 Mức lương</a>
+                            <a href="#" onclick="deleteEmployee('Lý Văn Phúc')">🗑️ Xóa nhân viên</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

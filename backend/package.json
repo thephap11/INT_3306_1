@@ -5,25 +5,26 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node src/server.js",
+    "start": "node src/server.js",
     "sync-config": "node sync-config.cjs",
     "reset-config": "node reset-config.cjs",
     "db:migrate": "node sync-config.cjs && sequelize-cli db:migrate && node reset-config.cjs",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
     "db:migrate:reset": "node sync-config.cjs && sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate && node reset-config.cjs",
     "db:migrate:status": "sequelize-cli db:migrate:status",
-    "db:seed": "node sync-config.cjs && sequelize-cli db:seed:all && node reset-config.cjs",
-    "db:seed:undo": "sequelize-cli db:seed:undo:all"
+    "create-admin": "node create-admin.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.1",
-    "express": "^4.19.2",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
+    "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "mysql2": "^3.6.5",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "^7.0.11",
     "sequelize": "^6.35.2"
   },
   "devDependencies": {

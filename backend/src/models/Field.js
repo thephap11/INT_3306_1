@@ -1,4 +1,3 @@
-
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 
@@ -14,11 +13,11 @@ const Field = sequelize.define('Field', {
     allowNull: true
   },
   field_name: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.STRING(50),
     allowNull: false
   },
   location: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.STRING(100),
     allowNull: true
   },
   status: {

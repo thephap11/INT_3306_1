@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Quản Lý Đặt Sân</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>⚽ Admin Panel</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Quản Lý Sân Bóng</a></li>
+                <li><a href="users.html">Quản Lý Người Dùng</a></li>
+                <li><a href="employees.html">Quản Lý Nhân Viên</a></li>
+                <li><a href="bookings.html" class="active">Quản Lý Đặt Sân</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Quản Lý Đặt Sân</h1>
+                <button class="btn-primary" onclick="showAddBookingModal()">+ Thêm Đặt Sân</button>
+            </header>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Tổng Lượt Đặt (Tháng)</h3>
+                    <p class="stat-number">156</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Đặt Sân Hôm Nay</h3>
+                    <p class="stat-number">8</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Doanh Thu (Tháng)</h3>
+                    <p class="stat-number">89.5</p>
+                    <span style="font-size: 0.8em; color: #FFC107;">triệu VNĐ</span>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="🔍 Tìm kiếm đặt sân...">
+            </div>
+
+            <div class="bookings-container">
+                <div class="booking-card" onclick="showBookingDetails('booking1')">
+                    <div class="booking-header">
+                        <h3>Nguyễn Văn An</h3>
+                        <span class="booking-status status-confirmed">✓ Đã xác nhận</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Thiên Long</p>
+                        <p class="booking-date">📅 20/10/2025 - 18:00 - 20:00</p>
+                    </div>
+                </div>
+
+                <div class="booking-card" onclick="showBookingDetails('booking2')">
+                    <div class="booking-header">
+                        <h3>Trần Thị Bình</h3>
+                        <span class="booking-status status-pending">⏳ Chờ xác nhận</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Hoàng Gia</p>
+                        <p class="booking-date">📅 21/10/2025 - 16:00 - 18:00</p>
+                    </div>
+                </div>
+
+                <div class="booking-card" onclick="showBookingDetails('booking3')">
+                    <div class="booking-header">
+                        <h3>Lê Văn Cường</h3>
+                        <span class="booking-status status-confirmed">✓ Đã xác nhận</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Phú Thọ</p>
+                        <p class="booking-date">📅 20/10/2025 - 19:00 - 21:00</p>
+                    </div>
+                </div>
+
+                <div class="booking-card" onclick="showBookingDetails('booking4')">
+                    <div class="booking-header">
+                        <h3>Phạm Thị Dung</h3>
+                        <span class="booking-status status-confirmed">✓ Đã xác nhận</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Đại Nam</p>
+                        <p class="booking-date">📅 22/10/2025 - 17:00 - 19:00</p>
+                    </div>
+                </div>
+
+                <div class="booking-card" onclick="showBookingDetails('booking5')">
+                    <div class="booking-header">
+                        <h3>Hoàng Văn Em</h3>
+                        <span class="booking-status status-completed">✓ Đã hoàn thành</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Hòa Bình</p>
+                        <p class="booking-date">📅 19/10/2025 - 18:00 - 20:00</p>
+                    </div>
+                </div>
+
+                <div class="booking-card" onclick="showBookingDetails('booking6')">
+                    <div class="booking-header">
+                        <h3>Vũ Thị Hoa</h3>
+                        <span class="booking-status status-pending">⏳ Chờ xác nhận</span>
+                    </div>
+                    <div class="booking-info">
+                        <p class="field-name">🏟️ Sân Bóng Thiên Long</p>
+                        <p class="booking-date">📅 23/10/2025 - 15:00 - 17:00</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Chi Tiết Đặt Sân -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Chi Tiết Đặt Sân</h2>
+            <div class="booking-details">
+                <div class="detail-row">
+                    <span class="detail-label">Người đặt:</span>
+                    <span class="detail-value" id="modal-customer">Nguyễn Văn An</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Số điện thoại:</span>
+                    <span class="detail-value" id="modal-phone">0901234567</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Sân bóng:</span>
+                    <span class="detail-value" id="modal-field">Sân Bóng Thiên Long</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Địa chỉ sân:</span>
+                    <span class="detail-value" id="modal-address">123 Đường Nguyễn Văn A, Quận 1</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Ngày đặt:</span>
+                    <span class="detail-value" id="modal-date">20/10/2025</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Khung giờ:</span>
+                    <span class="detail-value" id="modal-time">18:00 - 20:00 (2 giờ)</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Giá sân:</span>
+                    <span class="detail-value detail-price" id="modal-price">400,000 VNĐ</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Trạng thái:</span>
+                    <span class="detail-value" id="modal-status">Đã xác nhận</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="confirmBooking()">Xác nhận</button>
+                <button class="btn-secondary" onclick="cancelBooking()">Hủy đặt sân</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

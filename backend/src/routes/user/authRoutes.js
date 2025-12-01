@@ -5,14 +5,14 @@ import {
   getMe,
   refreshToken,
   logout
-} from '../controllers/authController.js';
+} from '../../controllers/user/authController.js';
 import {
   forgotPassword,
   verifyOTP,
   resetPassword,
   resendOTP
-} from '../controllers/passwordResetController.js';
-import { protect } from '../middleware/auth.js';
+} from '../../controllers/user/passwordResetController.js';
+import { protect } from '../../middleware/auth.js';
 
 const router = Router();
 

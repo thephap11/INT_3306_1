@@ -9,12 +9,10 @@ export default function Navbar() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Kiểm tra user đã đăng nhập chưa
     const checkAuth = () => {
       const storedUser = localStorage.getItem('user')
       const token = localStorage.getItem('token')
       
-      // Chỉ set user nếu có cả user và token
       if (storedUser && token) {
         setUser(JSON.parse(storedUser))
       } else {
@@ -24,7 +22,6 @@ export default function Navbar() {
     
     checkAuth()
     
-    // Listen for storage changes (logout từ tab khác)
     window.addEventListener('storage', checkAuth)
     
     return () => {
@@ -34,11 +31,12 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await authAPI.logout() // Xóa tất cả token và user
+      await authAPI.logout()
     } catch (err) {
       console.error('Logout error:', err)
     }
     setUser(null)
+    window.dispatchEvent(new Event('userUpdated'));
     navigate('/user/login')
   }
 
@@ -52,7 +50,7 @@ export default function Navbar() {
         <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
           <li><Link to="/">Trang chủ</Link></li>
           <li><Link to="/user/fields">Danh sách sân bãi</Link></li>
-          {/* <li><Link to="/user/booking">Đặt lịch</Link></li> */}
+          {user && <li><Link to="/user/booking-history">Lịch sử đặt sân</Link></li>}
           <li><Link to="/user/policy">Chính sách</Link></li>
           <li><Link to="/user/review">Đánh giá</Link></li>
           <li><Link to="/user/contact">Liên hệ</Link></li>
