@@ -1,18 +1,31 @@
+// ROUTES xác định URL và ánh xạ đến controller tương ứng
 import express from "express";
 import {
   getAllFields,
   getFieldById,
+  updateField,
 } from "../../controllers/manager/fieldController.js";
+import {
+  uploadFieldImage,
+  getFieldImages,
+  deleteFieldImage,
+} from "../../controllers/manager/fieldController.js";
+import { uploadSingle } from "../../middleware/upload.js";
 
 const router = express.Router();
 
-// GET /api/manager/fields → Lấy danh sách sân
+// upload single image
+router.post("/:id/upload-image", uploadSingle, uploadFieldImage);
+
+// lấy danh sách ảnh
+router.get("/:id/images", getFieldImages);
+
+// xóa ảnh
+router.delete("/images/:imageId", deleteFieldImage);
+
+// các route động
 router.get("/", getAllFields);
-
-// GET /api/manager/fields/:id → Xem chi tiết sân
 router.get("/:id", getFieldById);
-
-// PUT /api/manager/fields/:id - Cập nhật thông tin sân (Giá, vị trí, trạng thái)
 router.put("/:id", updateField);
 
 export default router;

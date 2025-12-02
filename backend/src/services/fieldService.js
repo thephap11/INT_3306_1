@@ -33,25 +33,62 @@ export const getFieldByIdService = async (id) => {
 };
 
 /**
- *Cập nhật thông tin sân bóng: giá, vị trí, trạng thái sân
+ * Cập nhật thông tin sân bóng
+ * Cho phép update:
+ * - field_name
+ * - price
+ * - location
+ * - status
  */
-export const updateFieldById = async (id, data) => {
-  const updateField = [];
-  const values = [];
+export const updateFieldService = async (id, data) => {
+  try {
+    const updateFields = [];
+    const values = [];
 
-  if (data.price !== undefined) {
-    updateField.push("price= ?");
-    values.push(data.price);
-  }
+    if (data.field_name !== undefined) {
+      updateFields.push("field_name = ?");
+      values.push(data.field_name);
+    }
 
-  if (data.location !== undefined) {
-    updateField.push("location= ?");
-    values.push(data.location);
+    if (data.price !== undefined) {
+      updateFields.push("price = ?");
+      values.push(data.price);
+    }
+
+    if (data.location !== undefined) {
+      updateFields.push("location = ?");
+      values.push(data.location);
+    }
+
+    if (data.status !== undefined) {
+      updateFields.push("status = ?");
+      values.push(data.status);
+    }
+
+    // Không có gì để update
+    if (updateFields.length === 0) {
+      return null;
+    }
+
+    const sql = `UPDATE fields SET ${updateFields.join(
+      ", "
+    )} WHERE field_id = ?`;
+
+    values.push(id);
+
+    const [result] = await db.query(sql, values);
+
+    if (result.affectedRows === 0) return null;
+
+    // Lấy lại dữ liệu sau update
+    const [updated] = await db.query(
+      "SELECT * FROM fields WHERE field_id = ?",
+      [id]
+    );
+
+    return updated[0];
+  } catch (error) {
+    console.error("🔥 Lỗi updateFieldService:", error);
+    throw error;
   }
-  if (data.status !== undefined) {
-    updateField.push("status= ?");
-    values.push(data.status);
-  }
-  const sql = 'UPDATE fields SET ${updateField.join(", ")} where field_id = ?';
-  values.push(id);
 };

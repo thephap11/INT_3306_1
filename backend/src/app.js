@@ -3,7 +3,6 @@ import db from "./config/db.js";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import fieldRoutes from "./routes/manager/fieldRoutes.js";
 
 // manager
 import managerFieldRoutes from "./routes/manager/fieldRoutes.js";
@@ -34,6 +33,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
+// Check server
 app.get("/", (req, res) => {
   res.json({ status: "Football Backend Running!" });
 });
