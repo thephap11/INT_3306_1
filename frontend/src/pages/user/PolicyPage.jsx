@@ -1,279 +1,285 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
-import './PolicyPage.css'
+import './PolicyPage.modern.css'
 
 export default function PolicyPage() {
+  const navigate = useNavigate()
+
   return (
-    <div className="policy-page">
+    <div className="policy-page-modern">
       <Navbar />
       
       <div className="policy-container">
-        <div className="policy-header">
-          <h1>📋 Chính sách & Điều khoản</h1>
-          <p className="header-subtitle">Quy định sử dụng dịch vụ đặt sân bóng đá</p>
+        {/* Hero Section */}
+        <div className="policy-hero">
+          <div className="hero-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h1>Chính sách & Điều khoản</h1>
+          <p>Vui lòng đọc kỹ các chính sách để đảm bảo quyền lợi của bạn khi sử dụng dịch vụ đặt sân</p>
         </div>
 
-        <div className="policy-content">
-          {/* Chính sách đặt sân */}
-          <section className="policy-section">
-            <div className="section-icon">⚽</div>
-            <h2>1. Chính sách đặt sân</h2>
-            
-            <div className="policy-card">
-              <h3>1.1. Quy định đặt sân</h3>
-              <ul>
-                <li>
-                  <strong>Thời gian đặt trước:</strong> Khách hàng có thể đặt sân trước tối thiểu 2 giờ và tối đa 30 ngày.
-                </li>
-                <li>
-                  <strong>Thời lượng thuê sân:</strong> Mỗi khung giờ đặt sân tối thiểu là 2 tiếng, tối đa 4 tiếng liên tục.
-                </li>
-                <li>
-                  <strong>Xác nhận đặt sân:</strong> Sau khi đặt sân, vui lòng chờ quản lý xác nhận trong vòng 30 phút. Nếu không nhận được xác nhận, vui lòng liên hệ hotline: 0123-456-789
-                </li>
-                <li>
-                  <strong>Thông tin đặt sân:</strong> Vui lòng cung cấp đầy đủ và chính xác thông tin (họ tên, số điện thoại, email) để được hỗ trợ tốt nhất.
-                </li>
-                <li>
-                  <strong>Đặt lịch cố định:</strong> Đối với khách hàng có nhu cầu đặt lịch cố định hàng tuần/tháng, vui lòng liên hệ trực tiếp để được tư vấn và hưởng ưu đãi.
-                </li>
-              </ul>
-            </div>
-
-            <div className="policy-card">
-              <h3>1.2. Xác nhận và thông báo</h3>
-              <ul>
-                <li>Sau khi đặt sân thành công, hệ thống sẽ gửi email/SMS xác nhận về thông tin đặt sân.</li>
-                <li>Khách hàng sẽ nhận được thông báo khi quản lý xác nhận hoặc từ chối yêu cầu đặt sân.</li>
-                <li>Vui lòng kiểm tra email/tin nhắn thường xuyên để không bỏ lỡ thông tin quan trọng.</li>
-                <li>Trong trường hợp có thay đổi, chúng tôi sẽ liên hệ qua số điện thoại đã đăng ký.</li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Chính sách thanh toán */}
-          <section className="policy-section">
-            <div className="section-icon">💳</div>
-            <h2>2. Chính sách thanh toán</h2>
-            
-            <div className="policy-card">
-              <h3>2.1. Phương thức thanh toán</h3>
-              <ul>
-                <li>
-                  <strong>Đặt cọc trước:</strong> Thanh toán đặt cọc 50% giá trị đặt sân qua chuyển khoản hoặc ví điện tử (Momo, ZaloPay, VNPay).
-                </li>
-                <li>
-                  <strong>Thanh toán tại sân:</strong> Thanh toán số tiền còn lại (50%) khi đến sân. Chấp nhận tiền mặt hoặc chuyển khoản.
-                </li>
-                <li>
-                  <strong>Thanh toán toàn bộ trước:</strong> Khách hàng có thể thanh toán 100% trước qua các kênh online để được ưu tiên và nhận ưu đãi.
-                </li>
-              </ul>
-            </div>
-
-            <div className="policy-card">
-              <h3>2.2. Thông tin chuyển khoản</h3>
-              <div className="bank-info">
-                <div className="bank-item">
-                  <strong>🏦 Ngân hàng:</strong> Vietcombank - Chi nhánh Hà Nội
-                </div>
-                <div className="bank-item">
-                  <strong>👤 Chủ tài khoản:</strong> NGUYEN VAN A
-                </div>
-                <div className="bank-item">
-                  <strong>🔢 Số tài khoản:</strong> 0123456789
-                </div>
-                <div className="bank-item">
-                  <strong>💬 Nội dung:</strong> [Họ tên] - [Số điện thoại] - Dat san [Ngày]
-                </div>
+        {/* Policy Sections */}
+        <div className="policy-sections">
+          {/* Booking Policy */}
+          <div className="policy-section">
+            <div className="section-header">
+              <div className="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div className="section-title">
+                <h2>Chính sách đặt sân</h2>
+                <p>Quy định về việc đặt và sử dụng sân bóng</p>
               </div>
             </div>
-
-            <div className="policy-card">
-              <h3>2.3. Hóa đơn VAT</h3>
-              <ul>
-                <li>Hóa đơn VAT được xuất theo yêu cầu của khách hàng.</li>
-                <li>Vui lòng cung cấp thông tin công ty (tên, mã số thuế, địa chỉ) khi đặt sân nếu có nhu cầu xuất hóa đơn.</li>
-                <li>Hóa đơn sẽ được gửi qua email trong vòng 24 giờ sau khi hoàn thành thanh toán.</li>
+            <div className="section-body">
+              <ul className="policy-list">
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Thời gian đặt sân</h3>
+                    <p>Quý khách vui lòng đặt sân trước ít nhất 2 giờ so với giờ bắt đầu để đảm bảo sân được chuẩn bị tốt nhất.</p>
+                  </div>
+                </li>
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Xác nhận đặt sân</h3>
+                    <p>Đơn đặt sân sẽ được xác nhận trong vòng 30 phút. Quý khách vui lòng kiểm tra email hoặc tin nhắn để nhận thông báo xác nhận.</p>
+                  </div>
+                </li>
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Thời gian nhận sân</h3>
+                    <p>Vui lòng đến đúng giờ đã đặt. Nếu đến muộn quá 15 phút, đơn đặt sân có thể bị hủy và mất phí đặt cọc.</p>
+                  </div>
+                </li>
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Gia hạn thời gian</h3>
+                    <p>Nếu muốn chơi thêm giờ, vui lòng liên hệ trực tiếp với quản lý sân. Việc gia hạn phụ thuộc vào lịch trống của sân.</p>
+                  </div>
+                </li>
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Quy định sử dụng</h3>
+                    <p>Quý khách có trách nhiệm giữ gìn cơ sở vật chất của sân. Mọi hư hỏng do quý khách gây ra sẽ phải bồi thường theo giá trị thực tế.</p>
+                  </div>
+                </li>
               </ul>
             </div>
-          </section>
+          </div>
 
-          {/* Chính sách hủy/đổi lịch */}
-          <section className="policy-section">
-            <div className="section-icon">🔄</div>
-            <h2>3. Chính sách hủy và đổi lịch</h2>
-            
-            <div className="policy-card">
-              <h3>3.1. Hủy đặt sân</h3>
-              <div className="refund-table">
-                <div className="refund-row header">
-                  <div className="refund-col">Thời gian hủy</div>
-                  <div className="refund-col">Hoàn tiền</div>
-                </div>
-                <div className="refund-row">
-                  <div className="refund-col">Hủy trước 48 giờ</div>
-                  <div className="refund-col success">100% tiền đặt cọc</div>
-                </div>
-                <div className="refund-row">
-                  <div className="refund-col">Hủy trước 24 giờ</div>
-                  <div className="refund-col warning">70% tiền đặt cọc</div>
-                </div>
-                <div className="refund-row">
-                  <div className="refund-col">Hủy trước 12 giờ</div>
-                  <div className="refund-col danger">50% tiền đặt cọc</div>
-                </div>
-                <div className="refund-row">
-                  <div className="refund-col">Hủy trong vòng 12 giờ</div>
-                  <div className="refund-col error">Không hoàn tiền</div>
-                </div>
+          {/* Payment Policy */}
+          <div className="policy-section">
+            <div className="section-header">
+              <div className="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+              </div>
+              <div className="section-title">
+                <h2>Chính sách thanh toán</h2>
+                <p>Hướng dẫn và quy định về phương thức thanh toán</p>
               </div>
             </div>
-
-            <div className="policy-card">
-              <h3>3.2. Đổi lịch đặt sân</h3>
-              <ul>
-                <li>
-                  <strong>Đổi lịch miễn phí:</strong> Được đổi lịch miễn phí 1 lần nếu thông báo trước ít nhất 12 giờ.
+            <div className="section-body">
+              <ul className="policy-list">
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Phương thức thanh toán</h3>
+                    <p>Chúng tôi chấp nhận thanh toán bằng tiền mặt, chuyển khoản ngân hàng, ví điện tử (Momo, ZaloPay, VNPay).</p>
+                  </div>
                 </li>
-                <li>
-                  <strong>Đổi lịch lần 2:</strong> Từ lần thứ 2 trở đi, phí đổi lịch là 100.000 VNĐ/lần.
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Đặt cọc</h3>
+                    <p>Đối với các đơn đặt sân vào giờ cao điểm (18h-22h), quý khách cần đặt cọc 30% giá trị đơn hàng để giữ chỗ.</p>
+                  </div>
                 </li>
-                <li>
-                  <strong>Điều kiện đổi lịch:</strong> Chỉ được đổi sang khung giờ khác trong vòng 7 ngày kể từ ngày đặt ban đầu.
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Thanh toán phần còn lại</h3>
+                    <p>Quý khách thanh toán số tiền còn lại khi đến nhận sân. Vui lòng mang theo mã đặt sân để đối chiếu.</p>
+                  </div>
                 </li>
-              </ul>
-            </div>
-
-            <div className="policy-card">
-              <h3>3.3. Trường hợp bất khả kháng</h3>
-              <ul>
-                <li>
-                  <strong>Mưa to, thời tiết xấu:</strong> Hoàn 100% hoặc đổi lịch miễn phí, linh hoạt.
-                </li>
-                <li>
-                  <strong>Sự cố kỹ thuật:</strong> Nếu sân không thể sử dụng do lỗi kỹ thuật, hoàn 100% và hỗ trợ đổi sang sân khác (nếu có).
-                </li>
-                <li>
-                  <strong>Thiên tai, dịch bệnh:</strong> Hoàn tiền 100% hoặc giữ lại để sử dụng sau khi tình hình ổn định.
-                </li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Quy định sử dụng sân */}
-          <section className="policy-section">
-            <div className="section-icon">⚠️</div>
-            <h2>4. Quy định sử dụng sân</h2>
-            
-            <div className="policy-card">
-              <h3>4.1. Thời gian sử dụng</h3>
-              <ul>
-                <li>
-                  <strong>Giờ vào sân:</strong> Vào sân đúng giờ đã đặt. Trễ quá 15 phút sẽ mất 30 phút của khung giờ thuê.
-                </li>
-                <li>
-                  <strong>Giờ kết thúc:</strong> Kết thúc đúng giờ để không ảnh hưởng đến khách tiếp theo. Nếu muốn kéo dài, vui lòng liên hệ trước và thanh toán thêm.
-                </li>
-                <li>
-                  <strong>Thời gian chuẩn bị:</strong> Khách được vào sân trước 10 phút để thay đồ và chuẩn bị.
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Hóa đơn VAT</h3>
+                    <p>Nếu cần xuất hóa đơn VAT, vui lòng thông báo trước khi thanh toán và cung cấp đầy đủ thông tin công ty.</p>
+                  </div>
                 </li>
               </ul>
             </div>
+          </div>
 
-            <div className="policy-card">
-              <h3>4.2. Vệ sinh và an toàn</h3>
-              <ul>
-                <li>Giữ gìn vệ sinh chung, không xả rác bừa bãi. Vi phạm sẽ bị phạt 200.000 VNĐ.</li>
-                <li>Không mang đồ ăn, thức uống có cồn vào khu vực sân thi đấu.</li>
-                <li>Không hút thuốc trong khu vực sân. Có khu vực riêng dành cho người hút thuốc.</li>
-                <li>Tuân thủ các quy định về an toàn cháy nổ và an ninh.</li>
-                <li>Báo ngay cho nhân viên nếu phát hiện hư hỏng thiết bị hoặc sự cố.</li>
-              </ul>
+          {/* Cancellation & Refund Policy */}
+          <div className="policy-section">
+            <div className="section-header">
+              <div className="section-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <polyline points="1 20 1 14 7 14"/>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                </svg>
+              </div>
+              <div className="section-title">
+                <h2>Chính sách hủy sân & hoàn tiền</h2>
+                <p>Quy định về việc hủy đặt sân và mức hoàn tiền</p>
+              </div>
             </div>
-
-            <div className="policy-card">
-              <h3>4.3. Trang phục và thiết bị</h3>
-              <ul>
-                <li>
-                  <strong>Giày đá bóng:</strong> Sử dụng giày phù hợp cho sân cỏ nhân tạo. Không sử dụng giày đinh sắt.
+            <div className="section-body">
+              <ul className="policy-list">
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Quyền hủy đặt sân</h3>
+                    <p>Quý khách có quyền hủy đặt sân bất kỳ lúc nào. Tuy nhiên, mức hoàn tiền sẽ phụ thuộc vào thời điểm hủy.</p>
+                  </div>
                 </li>
-                <li>
-                  <strong>Trang phục:</strong> Mặc trang phục thể thao phù hợp, gọn gàng.
+                <li className="policy-item">
+                  <div className="item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </div>
+                  <div className="item-content">
+                    <h3>Thời gian xử lý hoàn tiền</h3>
+                    <p>Tiền sẽ được hoàn lại trong vòng 3-7 ngày làm việc kể từ ngày hủy đơn. Phương thức hoàn tiền theo hình thức đã thanh toán.</p>
+                  </div>
                 </li>
-                <li>
-                  <strong>Thiết bị bảo hộ:</strong> Khuyến khích sử dụng bảo hộ (ống đồng, bó gối) để đảm bảo an toàn.
-                </li>
-                <li>
-                  <strong>Bóng đá:</strong> Sân cung cấp bóng miễn phí. Nếu muốn sử dụng bóng riêng, vui lòng đảm bảo chất lượng tốt.
-                </li>
               </ul>
-            </div>
 
-            <div className="policy-card">
-              <h3>4.4. Trách nhiệm bồi thường</h3>
-              <ul>
-                <li>Khách hàng chịu trách nhiệm bồi thường thiết bị nếu có hư hỏng do lỗi người sử dụng.</li>
-                <li>Không được tự ý di chuyển hoặc thay đổi thiết bị, trang thiết bị của sân.</li>
-                <li>Mọi tranh chấp, xô xát trong quá trình sử dụng sân do khách hàng tự giải quyết.</li>
-                <li>Sân không chịu trách nhiệm về tài sản cá nhân bị mất cắp. Vui lòng giữ gìn tài sản.</li>
-              </ul>
-            </div>
-          </section>
+              <div className="refund-table-container">
+                <table className="refund-table">
+                  <thead>
+                    <tr>
+                      <th>Thời gian hủy</th>
+                      <th>Mức hoàn tiền</th>
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Trước 24 giờ</td>
+                      <td><span className="refund-percentage">100%</span></td>
+                      <td>Hoàn lại toàn bộ số tiền đã đặt cọc</td>
+                    </tr>
+                    <tr>
+                      <td>12-24 giờ trước</td>
+                      <td><span className="refund-percentage">70%</span></td>
+                      <td>Hoàn lại 70% số tiền đã đặt cọc</td>
+                    </tr>
+                    <tr>
+                      <td>6-12 giờ trước</td>
+                      <td><span className="refund-percentage low">50%</span></td>
+                      <td>Hoàn lại 50% số tiền đã đặt cọc</td>
+                    </tr>
+                    <tr>
+                      <td>2-6 giờ trước</td>
+                      <td><span className="refund-percentage low">30%</span></td>
+                      <td>Hoàn lại 30% số tiền đã đặt cọc</td>
+                    </tr>
+                    <tr>
+                      <td>Dưới 2 giờ</td>
+                      <td><span className="refund-percentage none">0%</span></td>
+                      <td>Không hoàn lại tiền đặt cọc</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-          {/* Chính sách bảo mật */}
-          <section className="policy-section">
-            <div className="section-icon">🔒</div>
-            <h2>5. Chính sách bảo mật thông tin</h2>
-            
-            <div className="policy-card">
-              <h3>5.1. Thu thập thông tin</h3>
-              <ul>
-                <li>Chúng tôi chỉ thu thập thông tin cá nhân cần thiết: họ tên, số điện thoại, email, địa chỉ.</li>
-                <li>Thông tin được sử dụng để xác nhận đặt sân, liên hệ và cải thiện dịch vụ.</li>
-                <li>Mọi thông tin thanh toán được mã hóa và bảo mật tuyệt đối.</li>
-              </ul>
-            </div>
-
-            <div className="policy-card">
-              <h3>5.2. Bảo vệ thông tin</h3>
-              <ul>
-                <li>Thông tin khách hàng được bảo mật tuyệt đối theo quy định pháp luật.</li>
-                <li>Không chia sẻ thông tin cho bên thứ ba khi chưa có sự đồng ý của khách hàng.</li>
-                <li>Áp dụng các biện pháp bảo mật kỹ thuật cao để ngăn chặn truy cập trái phép.</li>
-                <li>Khách hàng có quyền yêu cầu xóa hoặc cập nhật thông tin cá nhân bất kỳ lúc nào.</li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Điều khoản khác */}
-          <section className="policy-section">
-            <div className="section-icon">📝</div>
-            <h2>6. Điều khoản chung</h2>
-            
-            <div className="policy-card">
-              <ul>
-                <li>Chính sách này có hiệu lực từ ngày 01/01/2025.</li>
-                <li>Chúng tôi có quyền thay đổi, điều chỉnh chính sách mà không cần báo trước. Mọi thay đổi sẽ được cập nhật trên website.</li>
-                <li>Khách hàng có trách nhiệm theo dõi và cập nhật chính sách mới nhất.</li>
-                <li>Mọi thắc mắc, khiếu nại vui lòng liên hệ: <strong>hotline@sanbongda.com</strong> hoặc <strong>0123-456-789</strong></li>
-                <li>Chính sách được áp dụng thống nhất cho tất cả các sân thuộc hệ thống.</li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Contact CTA */}
-          <div className="policy-footer">
-            <div className="footer-card">
-              <h3>💬 Cần hỗ trợ?</h3>
-              <p>Nếu bạn có bất kỳ thắc mắc nào về chính sách, đừng ngần ngại liên hệ với chúng tôi!</p>
-              <div className="footer-actions">
-                <a href="/user/contact" className="btn-contact">Liên hệ ngay</a>
-                <a href="/user/fields" className="btn-fields">Đặt sân</a>
+              <div className="important-notes">
+                <h4>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  Lưu ý quan trọng
+                </h4>
+                <ul>
+                  <li>Trong trường hợp bất khả kháng (mưa to, thiên tai, dịch bệnh), chúng tôi sẽ hoàn lại 100% số tiền hoặc cho phép đổi lịch miễn phí.</li>
+                  <li>Nếu quý khách đến muộn quá 15 phút mà không thông báo, đơn đặt sân sẽ bị hủy và không hoàn tiền.</li>
+                  <li>Các trường hợp đặc biệt sẽ được xem xét và giải quyết dựa trên từng tình huống cụ thể.</li>
+                  <li>Vui lòng liên hệ với chúng tôi ngay khi cần hủy đặt sân để được hỗ trợ tốt nhất.</li>
+                </ul>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Contact CTA */}
+        <div className="contact-cta">
+          <h3>Cần hỗ trợ thêm?</h3>
+          <p>Đội ngũ hỗ trợ khách hàng luôn sẵn sàng giải đáp mọi thắc mắc của bạn</p>
+          <button className="contact-button" onClick={() => navigate('/user/contact')}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Liên hệ ngay
+          </button>
         </div>
       </div>
 

@@ -32,7 +32,7 @@ export const getAllFieldsService = async (filters = {}, pagination = {}) => {
 
   // Get fields
   const [rows] = await sequelize.query(
-    `SELECT f.field_id, f.manager_id, f.field_name, f.location, f.status,
+    `SELECT f.field_id, f.manager_id, f.field_name, f.location, f.status, f.rental_price,
             p.person_name as manager_name, p.email as manager_email
      FROM fields f
      LEFT JOIN person p ON f.manager_id = p.person_id
@@ -55,7 +55,7 @@ export const getAllFieldsService = async (filters = {}, pagination = {}) => {
  */
 export const getFieldByIdService = async (id) => {
   const [[field]] = await sequelize.query(
-    `SELECT f.field_id, f.manager_id, f.field_name, f.location, f.status,
+    `SELECT f.field_id, f.manager_id, f.field_name, f.location, f.status, f.rental_price,
             p.person_name as manager_name, p.email as manager_email, p.phone as manager_phone
      FROM fields f
      LEFT JOIN person p ON f.manager_id = p.person_id

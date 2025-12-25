@@ -61,7 +61,6 @@ export const forgotPassword = async (req, res) => {
       is_used: false
     });
 
-    // Send OTP via email
     await sendOTPEmail(user.email, otpCode, user.person_name);
 
     res.status(200).json({
@@ -69,7 +68,7 @@ export const forgotPassword = async (req, res) => {
       message: 'Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.',
       data: {
         email: user.email,
-        expiresIn: 600 // seconds
+        expiresIn: 600
       }
     });
 
@@ -83,9 +82,6 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// @desc    Verify OTP code
-// @route   POST /api/auth/verify-otp
-// @access  Public
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -138,9 +134,6 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-// @desc    Reset password with OTP
-// @route   POST /api/auth/reset-password
-// @access  Public
 export const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
@@ -198,7 +191,6 @@ export const resetPassword = async (req, res) => {
     passwordReset.is_used = true;
     await passwordReset.save();
 
-    // Send success notification email
     await sendPasswordResetSuccessEmail(user.email, user.person_name);
 
     res.status(200).json({
@@ -216,9 +208,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// @desc    Resend OTP
-// @route   POST /api/auth/resend-otp
-// @access  Public
 export const resendOTP = async (req, res) => {
   try {
     const { email } = req.body;

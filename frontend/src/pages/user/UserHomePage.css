@@ -6,13 +6,14 @@
 
 .hero-section {
   position: relative;
-  height: 500px;
+  min-height: 600px;
   background-image: url('/images/hero/hero-bg.svg');
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3rem 0;
 }
 
 .hero-overlay {
@@ -29,21 +30,24 @@
   z-index: 1;
   text-align: center;
   color: white;
-  max-width: 800px;
+  max-width: 1100px;
+  width: 100%;
   padding: 0 2rem;
 }
 
 .hero-content h1 {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   margin-bottom: 1rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 800;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.5px;
 }
 
 .hero-content p {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  opacity: 0.95;
 }
 
 .features-section {

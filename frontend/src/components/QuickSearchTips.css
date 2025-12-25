@@ -1,0 +1,63 @@
+.quick-search-tips {
+  max-width: 1000px;
+  margin: 2.5rem auto 0;
+  padding: 0 1rem;
+}
+
+.quick-search-tips h3 {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.quick-search-buttons {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.quick-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #1e3a8a;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.quick-search-btn:hover {
+  border-color: #fbbf24;
+  background: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.3);
+}
+
+.quick-icon {
+  font-size: 1.2rem;
+}
+
+.quick-text {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .quick-search-buttons {
+    gap: 0.6rem;
+  }
+
+  .quick-search-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}

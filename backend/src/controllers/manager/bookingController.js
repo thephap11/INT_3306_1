@@ -1,35 +1,24 @@
-import sequelize from '../../config/database.js';
+import {
+  getManagerBookingsService,
+  getManagerBookingByIdService,
+  updateBookingStatusService
+} from '../../services/manager/bookingService.js';
 
+/**
+ * Get all bookings for manager's fields
+ * GET /api/manager/bookings?status=pending&fieldId=1
+ */
 export const listBookings = async (req, res) => {
   try {
-    const { status } = req.query;
+    const managerId = req.user.id;
+    const { status, fieldId, startDate, endDate } = req.query;
     
-    let whereClause = '';
-    if (status && status !== 'all') {
-      whereClause = `WHERE b.status = '${status}'`;
-    }
-
-    const [bookings] = await sequelize.query(`
-      SELECT 
-        b.booking_id,
-        b.field_id,
-        b.customer_id,
-        b.start_time,
-        b.end_time,
-        b.status,
-        b.price,
-        b.note,
-        f.field_name,
-        f.location,
-        p.person_name as customer_name,
-        p.email as customer_email,
-        p.phone as customer_phone
-      FROM bookings b
-      LEFT JOIN fields f ON b.field_id = f.field_id
-      LEFT JOIN person p ON b.customer_id = p.person_id
-      ${whereClause}
-      ORDER BY b.booking_id DESC
-    `);
+    const bookings = await getManagerBookingsService(managerId, {
+      status,
+      fieldId,
+      startDate,
+      endDate
+    });
 
     res.json(bookings);
   } catch (err) {
@@ -38,15 +27,38 @@ export const listBookings = async (req, res) => {
   }
 };
 
-export const approveBooking = async (req, res) => {
+/**
+ * Get booking by ID
+ * GET /api/manager/bookings/:id
+ */
+export const getBookingById = async (req, res) => {
   try {
+    const managerId = req.user.id;
     const { id } = req.params;
     
-    await sequelize.query(`
-      UPDATE bookings 
-      SET status = 'confirmed'
-      WHERE booking_id = ?
-    `, { replacements: [id] });
+    const booking = await getManagerBookingByIdService(managerId, id);
+    
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found or unauthorized' });
+    }
+    
+    res.json(booking);
+  } catch (err) {
+    console.error('Error fetching booking:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+/**
+ * Approve booking
+ * PUT /api/manager/bookings/:id/approve
+ */
+export const approveBooking = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const { id } = req.params;
+    
+    await updateBookingStatusService(managerId, id, 'confirmed');
 
     res.json({ message: 'Booking approved successfully' });
   } catch (err) {
@@ -55,23 +67,60 @@ export const approveBooking = async (req, res) => {
   }
 };
 
+/**
+ * Reject booking
+ * PUT /api/manager/bookings/:id/reject
+ */
 export const rejectBooking = async (req, res) => {
   try {
+    const managerId = req.user.id;
     const { id } = req.params;
     const { reason } = req.body;
     
-    const noteAppend = reason ? ` | Rejected reason: ${reason}` : '';
-    
-    await sequelize.query(`
-      UPDATE bookings 
-      SET status = 'rejected', 
-          note = CONCAT(IFNULL(note, ''), ?)
-      WHERE booking_id = ?
-    `, { replacements: [noteAppend, id] });
+    const note = reason ? `Rejected: ${reason}` : 'Rejected by manager';
+    await updateBookingStatusService(managerId, id, 'rejected', note);
 
     res.json({ message: 'Booking rejected successfully' });
   } catch (err) {
     console.error('Error rejecting booking:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+/**
+ * Complete booking
+ * PUT /api/manager/bookings/:id/complete
+ */
+export const completeBooking = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const { id } = req.params;
+    
+    await updateBookingStatusService(managerId, id, 'completed');
+
+    res.json({ message: 'Booking marked as completed' });
+  } catch (err) {
+    console.error('Error completing booking:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+/**
+ * Cancel booking
+ * PUT /api/manager/bookings/:id/cancel
+ */
+export const cancelBooking = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const { id } = req.params;
+    const { reason } = req.body;
+    
+    const note = reason ? `Cancelled: ${reason}` : 'Cancelled by manager';
+    await updateBookingStatusService(managerId, id, 'cancelled', note);
+
+    res.json({ message: 'Booking cancelled successfully' });
+  } catch (err) {
+    console.error('Error cancelling booking:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };

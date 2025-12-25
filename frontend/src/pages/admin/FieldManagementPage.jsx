@@ -134,16 +134,16 @@ function FieldManagementPage() {
     const columns = [
         { key: 'field_id', label: 'ID', sortable: true },
         { key: 'field_name', label: 'Tên sân', sortable: true },
-        { key: 'field_address', label: 'Địa chỉ', sortable: true },
-        {
-            key: 'field_type',
-            label: 'Loại sân',
-            render: (value) => `Sân ${value} người`
+        { 
+            key: 'location', 
+            label: 'Địa chỉ', 
+            sortable: true,
+            render: (value) => value || 'Chưa cập nhật'
         },
         {
-            key: 'price_per_hour',
-            label: 'Giá/giờ',
-            render: (value) => `${Number(value).toLocaleString()} VNĐ`
+            key: 'manager_name',
+            label: 'Quản lý',
+            render: (value) => value || 'Chưa phân công'
         },
         {
             key: 'status',
@@ -186,18 +186,37 @@ function FieldManagementPage() {
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={modalMode === 'create' ? 'Thêm sân bóng' : 'Sửa sân bóng'} size="large">
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Tên sân *</label><input type="text" value={formData.field_name} onChange={(e) => setFormData({ ...formData, field_name: e.target.value })} required style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} /></div>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Loại sân *</label><select value={formData.field_type} onChange={(e) => setFormData({ ...formData, field_type: e.target.value })} required style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }}><option value="5">Sân 5 người</option><option value="7">Sân 7 người</option><option value="11">Sân 11 người</option></select></div>
+                    <div style={{ marginBottom: '16px' }}>
+                        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Tên sân *</label>
+                        <input 
+                            type="text" 
+                            value={formData.field_name} 
+                            onChange={(e) => setFormData({ ...formData, field_name: e.target.value })} 
+                            required 
+                            style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} 
+                        />
                     </div>
-                    <div style={{ marginBottom: '16px' }}><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Địa chỉ *</label><input type="text" value={formData.field_address} onChange={(e) => setFormData({ ...formData, field_address: e.target.value })} required style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} /></div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Giá/giờ (VNĐ) *</label><input type="number" value={formData.price_per_hour} onChange={(e) => setFormData({ ...formData, price_per_hour: e.target.value })} required min="0" style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} /></div>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Trạng thái</label><select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }}><option value="active">Hoạt động</option><option value="inactive">Không hoạt động</option><option value="maintenance">Bảo trì</option></select></div>
+                    <div style={{ marginBottom: '16px' }}>
+                        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Địa chỉ</label>
+                        <input 
+                            type="text" 
+                            value={formData.location || ''} 
+                            onChange={(e) => setFormData({ ...formData, location: e.target.value })} 
+                            style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} 
+                            placeholder="Nhập địa chỉ sân bóng"
+                        />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Giờ mở cửa</label><input type="time" value={formData.open_time} onChange={(e) => setFormData({ ...formData, open_time: e.target.value })} style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} /></div>
-                        <div><label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Giờ đóng cửa</label><input type="time" value={formData.close_time} onChange={(e) => setFormData({ ...formData, close_time: e.target.value })} style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }} /></div>
+                    <div style={{ marginBottom: '16px' }}>
+                        <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>Trạng thái</label>
+                        <select 
+                            value={formData.status} 
+                            onChange={(e) => setFormData({ ...formData, status: e.target.value })} 
+                            style={{ width: '100%', padding: '8px', border: '1px solid #e5e7eb', borderRadius: '6px' }}
+                        >
+                            <option value="active">Hoạt động</option>
+                            <option value="inactive">Không hoạt động</option>
+                            <option value="maintenance">Bảo trì</option>
+                        </select>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
                         <button type="button" onClick={() => setIsModalOpen(false)} style={{ padding: '10px 20px', border: '1px solid #e5e7eb', background: 'white', borderRadius: '8px', cursor: 'pointer' }}>Hủy</button>

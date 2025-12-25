@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
 import SearchBar from '../../components/SearchBar.jsx'
+import QuickSearchTips from '../../components/QuickSearchTips.jsx'
 import FeatureCards from '../../components/FeatureCards.jsx'
 import './UserHomePage.css'
 
@@ -16,6 +17,7 @@ export default function UserHomePage() {
           <h1>HỆ THỐNG HỖ TRỢ TÌM KIẾM SÂN BÃI NHANH</h1>
           <p>Dịch vụ đa dạng, DHPoT247 của chúng tôi luôn sẵn sàng đáp ứng nhu cầu đặt sân nhanh chóng</p>
           <SearchBar />
+          <QuickSearchTips />
         </div>
       </section>
 

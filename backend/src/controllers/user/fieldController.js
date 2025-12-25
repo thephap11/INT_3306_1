@@ -1,6 +1,7 @@
 import Field from '../../models/Field.js';
 import { Op } from 'sequelize';
 import sequelize from '../../config/database.js';
+import { getAvailableSlots, checkSlotAvailability } from '../../services/user/scheduleService.js';
 
 // GET /api/user/fields
 export const listFields = async (req, res) => {
@@ -28,9 +29,10 @@ export const listFields = async (req, res) => {
       field_name: f.field_name,
       location: f.location || 'Chưa cập nhật',
       status: f.status,
+      rental_price: f.rental_price,
       image: '/images/fields/placeholder.svg',
-      price: 'Liên hệ',
-      pricePerHour: null,
+      price: f.rental_price || 'Liên hệ',
+      pricePerHour: f.rental_price,
       rating: (Math.random() * 1.5 + 3.5).toFixed(1),
       reviews: Math.floor(Math.random() * 200 + 10),
       type: 'Sân 7 người',
@@ -51,20 +53,41 @@ export const listFields = async (req, res) => {
 export const getField = async (req, res) => {
   try {
     const { id } = req.params;
+    const { date } = req.query; // Optional date parameter
+    
     const f = await Field.findOne({ where: { field_id: id } });
     if (!f) return res.status(404).json({ message: 'Field not found' });
 
+    // Get slots for next 7 days or specific date
+    let allSlots = [];
     const now = new Date();
-    const slots = [];
-    for (let d = 0; d < 7; d++) {
-      const day = new Date(now);
-      day.setDate(now.getDate() + d);
-      for (let h = 6; h < 22; h += 2) {
-        const start = new Date(day);
-        start.setHours(h, 0, 0, 0);
-        const end = new Date(day);
-        end.setHours(h + 2, 0, 0, 0);
-        slots.push({ start_time: start.toISOString(), end_time: end.toISOString(), available: true });
+    
+    if (date) {
+      // Get slots for specific date
+      const slots = await getAvailableSlots(id, date);
+      allSlots = slots.map(slot => ({
+        start_time: slot.start_time.toISOString(),
+        end_time: slot.end_time.toISOString(),
+        available: slot.available,
+        shift_label: slot.shift_label,
+        booking_status: slot.booking_status
+      }));
+    } else {
+      // Get slots for next 7 days
+      for (let d = 0; d < 7; d++) {
+        const day = new Date(now);
+        day.setDate(now.getDate() + d);
+        
+        const slots = await getAvailableSlots(id, day);
+        const daySlots = slots.map(slot => ({
+          start_time: slot.start_time.toISOString(),
+          end_time: slot.end_time.toISOString(),
+          available: slot.available,
+          shift_label: slot.shift_label,
+          booking_status: slot.booking_status
+        }));
+        
+        allSlots = allSlots.concat(daySlots);
       }
     }
 
@@ -73,10 +96,12 @@ export const getField = async (req, res) => {
       field_name: f.field_name,
       location: f.location,
       status: f.status,
+      rental_price: f.rental_price,
+      manager_id: f.manager_id,
       image: '/images/fields/placeholder.svg',
-      price: 'Liên hệ',
+      price: f.rental_price || 'Liên hệ',
       facilities: ['Bãi đỗ xe', 'Đèn chiếu sáng'],
-      slots
+      slots: allSlots
     };
 
     res.json(data);
@@ -89,7 +114,9 @@ export const getField = async (req, res) => {
 // POST /api/user/bookings
 export const createBooking = async (req, res) => {
   try {
-    const { customer_id, field_id, start_time, end_time, price, note } = req.body;
+    // Get customer_id from authenticated user (JWT payload has 'id' field)
+    const customer_id = req.user?.id;
+    const { field_id, start_time, end_time, price, note, customer_name, customer_phone } = req.body;
     
     if (!customer_id) {
       return res.status(400).json({ message: 'Missing customer_id' });
@@ -105,11 +132,28 @@ export const createBooking = async (req, res) => {
     }
 
     const finalPrice = price || 0;
-    const finalNote = note || '';
+    // Combine customer info with note
+    let finalNote = '';
+    if (customer_name || customer_phone) {
+      finalNote += `Tên: ${customer_name || 'N/A'}, SĐT: ${customer_phone || 'N/A'}`;
+      if (note) {
+        finalNote += ` - Ghi chú: ${note}`;
+      }
+    } else {
+      finalNote = note || '';
+    }
 
     const formatDatetime = (isoString) => {
       const date = new Date(isoString);
-      return date.toISOString().slice(0, 19).replace('T', ' ');
+      // Convert to Vietnam timezone (UTC+7)
+      const vnTime = new Date(date.getTime() + (7 * 60 * 60 * 1000));
+      const year = vnTime.getUTCFullYear();
+      const month = String(vnTime.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(vnTime.getUTCDate()).padStart(2, '0');
+      const hours = String(vnTime.getUTCHours()).padStart(2, '0');
+      const minutes = String(vnTime.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(vnTime.getUTCSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
     const mysqlStartTime = formatDatetime(start_time);
@@ -139,6 +183,16 @@ export const createBooking = async (req, res) => {
       });
     }
 
+    // Check if the time slot is available
+    const slotCheck = await checkSlotAvailability(field_id, new Date(start_time), new Date(end_time));
+    
+    if (!slotCheck.available) {
+      return res.status(400).json({
+        message: slotCheck.reason || 'Khung giờ này không khả dụng',
+        error: 'SLOT_NOT_AVAILABLE'
+      });
+    }
+
     await sequelize.query(
       `INSERT INTO bookings (customer_id, field_id, start_time, end_time, price, note, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
       { replacements: [customer_id, field_id, mysqlStartTime, mysqlEndTime, finalPrice, finalNote] }
@@ -149,12 +203,46 @@ export const createBooking = async (req, res) => {
 
     res.status(201).json({ message: 'Booking created', booking });
   } catch (err) {
-    console.error('createBooking error', err);
+    console.error('createBooking error:', err);
+    console.error('Error stack:', err.stack);
+    console.error('SQL Error:', err.original?.sqlMessage);
     res.status(500).json({ 
       message: 'Server error when creating booking', 
       error: err.message,
-      sqlError: err.original?.sqlMessage || err.original?.message
+      sqlError: err.original?.sqlMessage || err.original?.message,
+      details: err.toString()
     });
+  }
+};
+
+// GET /api/user/fields/:id/bookings - Get bookings for a specific field and date
+export const getFieldBookings = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { date } = req.query;
+    
+    if (!id) {
+      return res.status(400).json({ message: 'Field ID is required' });
+    }
+    
+    if (!date) {
+      return res.status(400).json({ message: 'Date is required' });
+    }
+
+    // Query bookings for the specific field and date
+    const [rows] = await sequelize.query(
+      `SELECT 
+        booking_id, customer_id, field_id, start_time, end_time, status, price, note
+      FROM bookings
+      WHERE field_id = ? AND DATE(start_time) = ? AND status != 'cancelled'
+      ORDER BY start_time ASC`,
+      { replacements: [id, date] }
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error('getFieldBookings error', err);
+    res.status(500).json({ message: 'Server error when fetching field bookings' });
   }
 };
 

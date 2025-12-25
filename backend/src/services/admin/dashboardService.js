@@ -1,218 +1,201 @@
-import { User, Field, Booking, Payment } from '../../models/index.js';
-import { Op } from 'sequelize';
+import sequelize from '../../config/database.js';
 
 /**
  * Get dashboard statistics
  */
 export const getDashboardStatsService = async () => {
-  // User stats
-  const totalUsers = await User.count({ where: { role: 'user' } });
-  const activeUsers = await User.count({ where: { role: 'user', status: 'active' } });
+  try {
+    // User stats
+    const [userStats] = await sequelize.query(
+      `SELECT 
+        COUNT(*) as totalUsers,
+        SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) as regularUsers,
+        SUM(CASE WHEN role = 'manager' THEN 1 ELSE 0 END) as totalManagers,
+        SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as totalAdmins,
+        SUM(CASE WHEN role = 'user' THEN 1 ELSE 0 END) as activeUsers
+      FROM person
+      WHERE role IN ('user', 'manager', 'admin')`
+    );
 
-  // Field stats
-  const totalFields = await Field.count();
-  const activeFields = await Field.count({ where: { status: 'active' } });
+    // Field stats with all statuses
+    const [fieldStats] = await sequelize.query(
+      `SELECT 
+        COUNT(*) as totalFields,
+        SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as activeFields,
+        SUM(CASE WHEN status = 'maintenance' THEN 1 ELSE 0 END) as maintenanceFields,
+        SUM(CASE WHEN status = 'inactive' THEN 1 ELSE 0 END) as inactiveFields
+      FROM fields`
+    );
 
-  // Booking stats
-  const totalBookings = await Booking.count();
-  const pendingBookings = await Booking.count({ where: { status: 'pending' } });
+    // Booking stats by status
+    const [bookingStats] = await sequelize.query(
+      `SELECT 
+        COUNT(*) as totalBookings,
+        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pendingBookings,
+        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmedBookings,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completedBookings,
+        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelledBookings,
+        SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejectedBookings
+      FROM bookings`
+    );
 
-  // Today's bookings
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
+    // Today's bookings
+    const [todayStats] = await sequelize.query(
+      `SELECT COUNT(*) as todayBookings
+      FROM bookings
+      WHERE DATE(start_time) = CURDATE()`
+    );
 
-  const todayBookings = await Booking.count({
-    where: {
-      start_time: {
-        [Op.gte]: today,
-        [Op.lt]: tomorrow
-      }
-    }
-  });
+    // Revenue stats - only from confirmed and completed bookings
+    const [revenueStats] = await sequelize.query(
+      `SELECT 
+        COALESCE(SUM(CASE WHEN status IN ('confirmed', 'completed') THEN price ELSE 0 END), 0) as totalRevenue,
+        COALESCE(SUM(CASE WHEN status IN ('confirmed', 'completed') AND MONTH(start_time) = MONTH(CURDATE()) AND YEAR(start_time) = YEAR(CURDATE()) THEN price ELSE 0 END), 0) as monthlyRevenue
+      FROM bookings`
+    );
 
-  // Revenue stats
-  const totalRevenue = await Payment.sum('amount', {
-    where: { status: 'completed' }
-  }) || 0;
-
-  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const monthlyRevenue = await Payment.sum('amount', {
-    where: {
-      status: 'completed',
-      payment_date: { [Op.gte]: thisMonthStart }
-    }
-  }) || 0;
-
-  // Pending payments
-  const pendingPayments = await Payment.count({ where: { status: 'pending' } });
-
-  // Recent bookings (last 5)
-  const recentBookings = await Booking.findAll({
-    limit: 5,
-    order: [['start_time', 'DESC']],
-    include: [
-      {
-        model: User,
-        as: 'customer',
-        attributes: ['person_name', 'phone']
-      },
-      {
-        model: Field,
-        as: 'field',
-        attributes: ['field_name']
-      }
-    ]
-  });
-
-  // Bookings by status
-  const bookingsByStatus = await Booking.findAll({
-    attributes: [
-      'status',
-      [Booking.sequelize.fn('COUNT', Booking.sequelize.col('booking_id')), 'count']
-    ],
-    group: ['status']
-  });
-
-  return {
-    users: {
-      total: totalUsers,
-      active: activeUsers
-    },
-    fields: {
-      total: totalFields,
-      active: activeFields
-    },
-    bookings: {
-      total: totalBookings,
-      pending: pendingBookings,
-      today: todayBookings
-    },
-    revenue: {
-      total: parseFloat(totalRevenue).toFixed(2),
-      monthly: parseFloat(monthlyRevenue).toFixed(2),
-      pendingPayments: pendingPayments
-    },
-    recentBookings: recentBookings,
-    bookingsByStatus: bookingsByStatus
-  };
+    return {
+      totalUsers: parseInt(userStats[0]?.totalUsers || 0),
+      regularUsers: parseInt(userStats[0]?.regularUsers || 0),
+      totalManagers: parseInt(userStats[0]?.totalManagers || 0),
+      totalAdmins: parseInt(userStats[0]?.totalAdmins || 0),
+      activeUsers: parseInt(userStats[0]?.activeUsers || 0),
+      totalFields: parseInt(fieldStats[0]?.totalFields || 0),
+      activeFields: parseInt(fieldStats[0]?.activeFields || 0),
+      maintenanceFields: parseInt(fieldStats[0]?.maintenanceFields || 0),
+      inactiveFields: parseInt(fieldStats[0]?.inactiveFields || 0),
+      totalBookings: parseInt(bookingStats[0]?.totalBookings || 0),
+      pendingBookings: parseInt(bookingStats[0]?.pendingBookings || 0),
+      confirmedBookings: parseInt(bookingStats[0]?.confirmedBookings || 0),
+      completedBookings: parseInt(bookingStats[0]?.completedBookings || 0),
+      cancelledBookings: parseInt(bookingStats[0]?.cancelledBookings || 0),
+      rejectedBookings: parseInt(bookingStats[0]?.rejectedBookings || 0),
+      todayBookings: parseInt(todayStats[0]?.todayBookings || 0),
+      totalRevenue: parseFloat(revenueStats[0]?.totalRevenue || 0),
+      monthlyRevenue: parseFloat(revenueStats[0]?.monthlyRevenue || 0)
+    };
+  } catch (error) {
+    console.error('Error in getDashboardStatsService:', error);
+    throw error;
+  }
 };
 
 /**
  * Get revenue by date range
  */
 export const getRevenuByDateRangeService = async (startDate, endDate) => {
-  const payments = await Payment.findAll({
-    where: {
-      status: 'completed',
-      payment_date: {
-        [Op.between]: [new Date(startDate), new Date(endDate)]
-      }
-    },
-    include: [
-      {
-        model: Field,
-        as: 'field',
-        attributes: ['field_name']
-      },
-      {
-        model: User,
-        as: 'customer',
-        attributes: ['person_name']
-      }
-    ],
-    order: [['payment_date', 'DESC']]
-  });
+  try {
+    const [bookings] = await sequelize.query(
+      `SELECT 
+        b.booking_id,
+        b.start_time,
+        b.end_time,
+        b.price,
+        b.status,
+        f.field_name,
+        p.person_name as customer_name
+      FROM bookings b
+      LEFT JOIN fields f ON b.field_id = f.field_id
+      LEFT JOIN person p ON b.customer_id = p.person_id
+      WHERE b.status IN ('confirmed', 'completed')
+        AND DATE(b.start_time) BETWEEN ? AND ?
+      ORDER BY b.start_time DESC`,
+      { replacements: [startDate, endDate] }
+    );
 
-  const totalRevenue = payments.reduce((sum, payment) => sum + parseFloat(payment.amount), 0);
+    const totalRevenue = bookings.reduce((sum, booking) => sum + parseFloat(booking.price || 0), 0);
 
-  return {
-    payments: payments,
-    totalRevenue: totalRevenue.toFixed(2),
-    count: payments.length
-  };
+    return {
+      bookings: bookings,
+      totalRevenue: totalRevenue,
+      totalBookings: bookings.length
+    };
+  } catch (error) {
+    console.error('Error in getRevenuByDateRangeService:', error);
+    throw error;
+  }
 };
 
 /**
  * Get revenue by field
  */
 export const getRevenueByFieldService = async (fieldId, startDate, endDate) => {
-  const whereClause = {
-    field_id: fieldId,
-    status: 'completed'
-  };
+  try {
+    let query = `
+      SELECT 
+        b.booking_id,
+        b.start_time,
+        b.end_time,
+        b.price,
+        b.status,
+        p.person_name as customer_name
+      FROM bookings b
+      LEFT JOIN person p ON b.customer_id = p.person_id
+      WHERE b.field_id = ?
+        AND b.status IN ('confirmed', 'completed')
+    `;
 
-  if (startDate && endDate) {
-    whereClause.payment_date = {
-      [Op.between]: [new Date(startDate), new Date(endDate)]
+    const replacements = [fieldId];
+
+    if (startDate && endDate) {
+      query += ' AND DATE(b.start_time) BETWEEN ? AND ?';
+      replacements.push(startDate, endDate);
+    }
+
+    query += ' ORDER BY b.start_time DESC';
+
+    const [bookings] = await sequelize.query(query, { replacements });
+
+    const totalRevenue = bookings.reduce((sum, booking) => sum + parseFloat(booking.price || 0), 0);
+
+    return {
+      bookings: bookings,
+      totalRevenue: totalRevenue,
+      count: bookings.length
     };
+  } catch (error) {
+    console.error('Error in getRevenueByFieldService:', error);
+    throw error;
   }
-
-  const payments = await Payment.findAll({
-    where: whereClause,
-    include: [
-      {
-        model: User,
-        as: 'customer',
-        attributes: ['person_name']
-      },
-      {
-        model: Booking,
-        as: 'booking',
-        attributes: ['start_time', 'end_time']
-      }
-    ],
-    order: [['payment_date', 'DESC']]
-  });
-
-  const totalRevenue = payments.reduce((sum, payment) => sum + parseFloat(payment.amount), 0);
-
-  return {
-    payments: payments,
-    totalRevenue: totalRevenue.toFixed(2),
-    count: payments.length
-  };
 };
 
 /**
  * Get monthly revenue statistics
  */
 export const getMonthlyRevenueStatsService = async (year) => {
-  const startDate = new Date(year, 0, 1);
-  const endDate = new Date(year, 11, 31, 23, 59, 59);
+  try {
+    const [results] = await sequelize.query(
+      `SELECT 
+        MONTH(start_time) as month,
+        SUM(price) as revenue,
+        COUNT(*) as count
+      FROM bookings
+      WHERE status IN ('confirmed', 'completed')
+        AND YEAR(start_time) = ?
+      GROUP BY MONTH(start_time)
+      ORDER BY MONTH(start_time) ASC`,
+      { replacements: [year] }
+    );
 
-  const payments = await Payment.findAll({
-    where: {
-      status: 'completed',
-      payment_date: {
-        [Op.between]: [startDate, endDate]
-      }
-    },
-    attributes: [
-      [Payment.sequelize.fn('MONTH', Payment.sequelize.col('payment_date')), 'month'],
-      [Payment.sequelize.fn('SUM', Payment.sequelize.col('amount')), 'revenue'],
-      [Payment.sequelize.fn('COUNT', Payment.sequelize.col('payment_id')), 'count']
-    ],
-    group: [Payment.sequelize.fn('MONTH', Payment.sequelize.col('payment_date'))],
-    order: [[Payment.sequelize.fn('MONTH', Payment.sequelize.col('payment_date')), 'ASC']]
-  });
+    // Fill in missing months with 0
+    const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+      month: i + 1,
+      revenue: 0,
+      count: 0
+    }));
 
-  // Fill in missing months with 0
-  const monthlyData = Array.from({ length: 12 }, (_, i) => ({
-    month: i + 1,
-    revenue: 0,
-    count: 0
-  }));
+    results.forEach(result => {
+      const monthIndex = result.month - 1;
+      monthlyData[monthIndex] = {
+        month: result.month,
+        revenue: parseFloat(result.revenue || 0),
+        count: parseInt(result.count || 0)
+      };
+    });
 
-  payments.forEach(payment => {
-    const monthIndex = payment.get('month') - 1;
-    monthlyData[monthIndex] = {
-      month: payment.get('month'),
-      revenue: parseFloat(payment.get('revenue')),
-      count: parseInt(payment.get('count'))
-    };
-  });
-
-  return monthlyData;
+    return monthlyData;
+  } catch (error) {
+    console.error('Error in getMonthlyRevenueStatsService:', error);
+    throw error;
+  }
 };

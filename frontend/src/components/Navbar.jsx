@@ -37,7 +37,7 @@ export default function Navbar() {
     }
     setUser(null)
     window.dispatchEvent(new Event('userUpdated'));
-    navigate('/user/login')
+    window.location.href = '/user/login'
   }
 
   return (
@@ -52,7 +52,6 @@ export default function Navbar() {
           <li><Link to="/user/fields">Danh sách sân bãi</Link></li>
           {user && <li><Link to="/user/booking-history">Lịch sử đặt sân</Link></li>}
           <li><Link to="/user/policy">Chính sách</Link></li>
-          <li><Link to="/user/review">Đánh giá</Link></li>
           <li><Link to="/user/contact">Liên hệ</Link></li>
         </ul>
 

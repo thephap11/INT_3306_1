@@ -24,6 +24,11 @@ const Field = sequelize.define('Field', {
     type: DataTypes.STRING(45),
     allowNull: true,
     defaultValue: 'active'
+  },
+  rental_price: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName: 'fields',

@@ -70,7 +70,6 @@ export default function Footer() {
           <Link to="/user/fields">Danh sách sân bãi</Link>
           <Link to="/user/booking">Đặt lịch</Link>
           <Link to="/user/support">Liên hệ</Link>
-          <Link to="/user/review">Đánh giá</Link>
         </div>
       </div>
     </footer>
