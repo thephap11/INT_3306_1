@@ -70,6 +70,30 @@
   to { opacity: 1; }
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-small,
+  .modal-medium,
+  .modal-large {
+    width: 95%;
+    max-width: 500px;
+  }
+
+  .modal-content {
+    max-height: 85vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-small,
+  .modal-medium,
+  .modal-large {
+    width: 100%;
+    margin: 10px;
+    border-radius: 8px;
+  }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

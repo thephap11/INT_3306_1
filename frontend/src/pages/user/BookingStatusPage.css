@@ -262,6 +262,26 @@
 }
 
 /* Responsive */
+@media (max-width: 768px) {
+  .status-container {
+    padding: 20px 16px;
+  }
+
+  .status-card {
+    padding: 2rem;
+  }
+
+  .status-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .status-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2.5rem;
+  }
+}
+
 @media (max-width: 640px) {
   .status-card {
     padding: 1.5rem;
@@ -293,5 +313,31 @@
 
   .detail-value {
     text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-container {
+    padding: 16px 12px;
+  }
+
+  .status-card {
+    padding: 1.25rem;
+  }
+
+  .status-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .status-message {
+    font-size: 0.95rem;
+  }
+
+  .detail-label {
+    font-size: 0.9rem;
+  }
+
+  .detail-value {
+    font-size: 0.95rem;
   }
 }

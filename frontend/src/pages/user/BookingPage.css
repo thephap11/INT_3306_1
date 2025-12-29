@@ -82,7 +82,42 @@
     padding: 1.5rem;
   }
 
+  .booking-container h1 {
+    font-size: 1.75rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .submit-btn {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-container {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+
+  .booking-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .submit-btn {
+    padding: 0.875rem;
+    font-size: 0.95rem;
   }
 }

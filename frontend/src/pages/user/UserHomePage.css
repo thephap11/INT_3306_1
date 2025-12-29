@@ -56,11 +56,50 @@
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    min-height: 450px;
+    padding: 2rem 0;
+  }
+
+  .hero-content {
+    padding: 0 1.5rem;
+  }
+
   .hero-content h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .hero-content p {
     font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .features-section {
+    padding: 3rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    min-height: 400px;
+    padding: 1.5rem 0;
+  }
+
+  .hero-content {
+    padding: 0 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-content p {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .features-section {
+    padding: 2.5rem 0;
   }
 }

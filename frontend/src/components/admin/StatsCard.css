@@ -17,6 +17,27 @@
 .stats-card-yellow { border-color: #f59e0b; }
 .stats-card-red { border-color: #ef4444; }
 .stats-card-purple { border-color: #8b5cf6; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-card {
+    padding: 16px;
+  }
+
+  .stats-card-title {
+    font-size: 13px;
+  }
+
+  .stats-card-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-card {
+    padding: 12px;
+  }
+}
 .stats-card-indigo { border-color: #6366f1; }
 
 .stats-card-header {

@@ -410,7 +410,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .history-container {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .history-header h1 {
@@ -423,6 +423,10 @@
 
   .filter-btn {
     width: 100%;
+  }
+
+  .booking-card {
+    padding: 1.25rem;
   }
 
   .booking-card-header {
@@ -442,5 +446,46 @@
 
   .booking-card-footer button {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .history-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .booking-card {
+    padding: 1rem;
+  }
+
+  .field-name {
+    font-size: 1rem;
+  }
+
+  .status-badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+
+  .detail-row .label,
+  .detail-row .value {
+    font-size: 0.85rem;
+  }
+
+  .booking-card-footer button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .empty-state h2 {
+    font-size: 1.25rem;
+  }
+
+  .empty-state p {
+    font-size: 0.95rem;
   }
 }
