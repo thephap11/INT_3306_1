@@ -10,7 +10,7 @@ export default function ManagerFieldsPage() {
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ field_name: '', location: '' });
+  const [formData, setFormData] = useState({ field_name: '', location: '', rental_price: '' });
 
   useEffect(() => {
     fetchFields();
@@ -61,14 +61,18 @@ export default function ManagerFieldsPage() {
   };
 
   const handleCreateField = () => {
-    setFormData({ field_name: '', location: '' });
+    setFormData({ field_name: '', location: '', rental_price: '' });
     setIsEditing(false);
     setSelectedField(null);
     setShowFormModal(true);
   };
 
   const handleEditField = (field) => {
-    setFormData({ field_name: field.field_name, location: field.location });
+    setFormData({ 
+      field_name: field.field_name, 
+      location: field.location,
+      rental_price: field.rental_price || ''
+    });
     setIsEditing(true);
     setSelectedField(field);
     setShowFormModal(true);
@@ -249,6 +253,18 @@ export default function ManagerFieldsPage() {
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="Nhập địa điểm"
                   required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Giá thuê (VNĐ/giờ)</label>
+                <input
+                  type="number"
+                  value={formData.rental_price}
+                  onChange={(e) => setFormData({ ...formData, rental_price: e.target.value })}
+                  placeholder="Nhập giá thuê"
+                  min="0"
+                  step="1000"
                 />
               </div>
 

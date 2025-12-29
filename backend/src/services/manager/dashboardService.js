@@ -35,15 +35,15 @@ export const getDashboardStatsService = async (managerId) => {
       FROM bookings b
       INNER JOIN fields f ON b.field_id = f.field_id
       WHERE f.manager_id = ?
-      AND DATE(b.start_time) = CURDATE()
+      AND DATE(b.start_time) = CURRENT_DATE
     `, { replacements: [managerId] });
 
     // Get revenue stats (only confirmed and completed)
     const [revenueStats] = await sequelize.query(`
       SELECT 
         COALESCE(SUM(b.price), 0) as totalRevenue,
-        COALESCE(SUM(CASE WHEN MONTH(b.start_time) = MONTH(CURDATE()) 
-                          AND YEAR(b.start_time) = YEAR(CURDATE()) 
+        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM b.start_time) = EXTRACT(MONTH FROM CURRENT_DATE) 
+                          AND EXTRACT(YEAR FROM b.start_time) = EXTRACT(YEAR FROM CURRENT_DATE) 
                           THEN b.price ELSE 0 END), 0) as monthlyRevenue
       FROM bookings b
       INNER JOIN fields f ON b.field_id = f.field_id
@@ -52,17 +52,17 @@ export const getDashboardStatsService = async (managerId) => {
     `, { replacements: [managerId] });
 
     return {
-      totalFields: Number(fieldStats[0].totalFields) || 0,
-      activeFields: Number(fieldStats[0].activeFields) || 0,
-      totalBookings: Number(bookingStats[0].totalBookings) || 0,
-      pendingBookings: Number(bookingStats[0].pendingBookings) || 0,
-      confirmedBookings: Number(bookingStats[0].confirmedBookings) || 0,
-      completedBookings: Number(bookingStats[0].completedBookings) || 0,
-      cancelledBookings: Number(bookingStats[0].cancelledBookings) || 0,
-      rejectedBookings: Number(bookingStats[0].rejectedBookings) || 0,
-      todayBookings: Number(todayStats[0].todayBookings) || 0,
-      totalRevenue: parseFloat(revenueStats[0].totalRevenue) || 0,
-      monthlyRevenue: parseFloat(revenueStats[0].monthlyRevenue) || 0
+      totalFields: Number(fieldStats[0].totalfields) || 0,
+      activeFields: Number(fieldStats[0].activefields) || 0,
+      totalBookings: Number(bookingStats[0].totalbookings) || 0,
+      pendingBookings: Number(bookingStats[0].pendingbookings) || 0,
+      confirmedBookings: Number(bookingStats[0].confirmedbookings) || 0,
+      completedBookings: Number(bookingStats[0].completedbookings) || 0,
+      cancelledBookings: Number(bookingStats[0].cancelledbookings) || 0,
+      rejectedBookings: Number(bookingStats[0].rejectedbookings) || 0,
+      todayBookings: Number(todayStats[0].todaybookings) || 0,
+      totalRevenue: parseFloat(revenueStats[0].totalrevenue) || 0,
+      monthlyRevenue: parseFloat(revenueStats[0].monthlyrevenue) || 0
     };
   } catch (error) {
     console.error('Error in getDashboardStatsService:', error);
@@ -109,15 +109,15 @@ export const getMonthlyRevenueStatsService = async (managerId, year) => {
   try {
     const [monthlyData] = await sequelize.query(`
       SELECT 
-        MONTH(b.start_time) as month,
+        EXTRACT(MONTH FROM b.start_time) as month,
         COALESCE(SUM(b.price), 0) as revenue,
         COUNT(b.booking_id) as bookings
       FROM bookings b
       INNER JOIN fields f ON b.field_id = f.field_id
       WHERE f.manager_id = ?
-      AND YEAR(b.start_time) = ?
+      AND EXTRACT(YEAR FROM b.start_time) = ?
       AND b.status IN ('confirmed', 'completed')
-      GROUP BY MONTH(b.start_time)
+      GROUP BY EXTRACT(MONTH FROM b.start_time)
       ORDER BY month
     `, { replacements: [managerId, year] });
 
