@@ -43,36 +43,36 @@ export const getDashboardStatsService = async () => {
     const [todayStats] = await sequelize.query(
       `SELECT COUNT(*) as todayBookings
       FROM bookings
-      WHERE DATE(start_time) = CURDATE()`
+      WHERE DATE(start_time) = CURRENT_DATE`
     );
 
     // Revenue stats - only from confirmed and completed bookings
     const [revenueStats] = await sequelize.query(
       `SELECT 
         COALESCE(SUM(CASE WHEN status IN ('confirmed', 'completed') THEN price ELSE 0 END), 0) as totalRevenue,
-        COALESCE(SUM(CASE WHEN status IN ('confirmed', 'completed') AND MONTH(start_time) = MONTH(CURDATE()) AND YEAR(start_time) = YEAR(CURDATE()) THEN price ELSE 0 END), 0) as monthlyRevenue
+        COALESCE(SUM(CASE WHEN status IN ('confirmed', 'completed') AND EXTRACT(MONTH FROM start_time) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM start_time) = EXTRACT(YEAR FROM CURRENT_DATE) THEN price ELSE 0 END), 0) as monthlyRevenue
       FROM bookings`
     );
 
     return {
-      totalUsers: parseInt(userStats[0]?.totalUsers || 0),
-      regularUsers: parseInt(userStats[0]?.regularUsers || 0),
-      totalManagers: parseInt(userStats[0]?.totalManagers || 0),
-      totalAdmins: parseInt(userStats[0]?.totalAdmins || 0),
-      activeUsers: parseInt(userStats[0]?.activeUsers || 0),
-      totalFields: parseInt(fieldStats[0]?.totalFields || 0),
-      activeFields: parseInt(fieldStats[0]?.activeFields || 0),
-      maintenanceFields: parseInt(fieldStats[0]?.maintenanceFields || 0),
-      inactiveFields: parseInt(fieldStats[0]?.inactiveFields || 0),
-      totalBookings: parseInt(bookingStats[0]?.totalBookings || 0),
-      pendingBookings: parseInt(bookingStats[0]?.pendingBookings || 0),
-      confirmedBookings: parseInt(bookingStats[0]?.confirmedBookings || 0),
-      completedBookings: parseInt(bookingStats[0]?.completedBookings || 0),
-      cancelledBookings: parseInt(bookingStats[0]?.cancelledBookings || 0),
-      rejectedBookings: parseInt(bookingStats[0]?.rejectedBookings || 0),
-      todayBookings: parseInt(todayStats[0]?.todayBookings || 0),
-      totalRevenue: parseFloat(revenueStats[0]?.totalRevenue || 0),
-      monthlyRevenue: parseFloat(revenueStats[0]?.monthlyRevenue || 0)
+      totalUsers: parseInt(userStats[0]?.totalusers || 0),
+      regularUsers: parseInt(userStats[0]?.regularusers || 0),
+      totalManagers: parseInt(userStats[0]?.totalmanagers || 0),
+      totalAdmins: parseInt(userStats[0]?.totaladmins || 0),
+      activeUsers: parseInt(userStats[0]?.activeusers || 0),
+      totalFields: parseInt(fieldStats[0]?.totalfields || 0),
+      activeFields: parseInt(fieldStats[0]?.activefields || 0),
+      maintenanceFields: parseInt(fieldStats[0]?.maintenancefields || 0),
+      inactiveFields: parseInt(fieldStats[0]?.inactivefields || 0),
+      totalBookings: parseInt(bookingStats[0]?.totalbookings || 0),
+      pendingBookings: parseInt(bookingStats[0]?.pendingbookings || 0),
+      confirmedBookings: parseInt(bookingStats[0]?.confirmedbookings || 0),
+      completedBookings: parseInt(bookingStats[0]?.completedbookings || 0),
+      cancelledBookings: parseInt(bookingStats[0]?.cancelledbookings || 0),
+      rejectedBookings: parseInt(bookingStats[0]?.rejectedbookings || 0),
+      todayBookings: parseInt(todayStats[0]?.todaybookings || 0),
+      totalRevenue: parseFloat(revenueStats[0]?.totalrevenue || 0),
+      monthlyRevenue: parseFloat(revenueStats[0]?.monthlyrevenue || 0)
     };
   } catch (error) {
     console.error('Error in getDashboardStatsService:', error);
@@ -166,14 +166,14 @@ export const getMonthlyRevenueStatsService = async (year) => {
   try {
     const [results] = await sequelize.query(
       `SELECT 
-        MONTH(start_time) as month,
+        EXTRACT(MONTH FROM start_time) as month,
         SUM(price) as revenue,
         COUNT(*) as count
       FROM bookings
       WHERE status IN ('confirmed', 'completed')
-        AND YEAR(start_time) = ?
-      GROUP BY MONTH(start_time)
-      ORDER BY MONTH(start_time) ASC`,
+        AND EXTRACT(YEAR FROM start_time) = ?
+      GROUP BY EXTRACT(MONTH FROM start_time)
+      ORDER BY EXTRACT(MONTH FROM start_time) ASC`,
       { replacements: [year] }
     );
 
