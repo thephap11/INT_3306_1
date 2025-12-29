@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { getDashboardStats, getRevenueByDateRange } from '../../services/managerApi';
-import './DashboardPage.css';
+import React, { useState, useEffect } from "react";
+import {
+  getDashboardStats,
+  getRevenueByDateRange,
+} from "../../services/managerApi";
+import "./DashboardPage.css";
 
 export default function ManagerDashboardPage() {
   const [stats, setStats] = useState({
@@ -14,7 +17,7 @@ export default function ManagerDashboardPage() {
     rejectedBookings: 0,
     todayBookings: 0,
     totalRevenue: 0,
-    monthlyRevenue: 0
+    monthlyRevenue: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,8 +30,7 @@ export default function ManagerDashboardPage() {
     try {
       setLoading(true);
       const data = await getDashboardStats();
-      console.log('Dashboard data received:', data);
-      
+
       // Convert all values to numbers explicitly
       setStats({
         totalFields: Number(data.totalFields) || 0,
@@ -41,12 +43,12 @@ export default function ManagerDashboardPage() {
         rejectedBookings: Number(data.rejectedBookings) || 0,
         todayBookings: Number(data.todayBookings) || 0,
         totalRevenue: Number(data.totalRevenue) || 0,
-        monthlyRevenue: Number(data.monthlyRevenue) || 0
+        monthlyRevenue: Number(data.monthlyRevenue) || 0,
       });
       setError(null);
     } catch (err) {
-      console.error('Failed to fetch dashboard stats:', err);
-      setError('Không thể tải dữ liệu thống kê');
+      console.error("Failed to fetch dashboard stats:", err);
+      setError("Không thể tải dữ liệu thống kê");
     } finally {
       setLoading(false);
     }
@@ -90,7 +92,9 @@ export default function ManagerDashboardPage() {
           <div className="stat-details">
             <h3>Tổng số sân</h3>
             <p className="stat-number">{stats.totalFields || 0}</p>
-            <span className="stat-subtitle">Sân đang hoạt động: {stats.activeFields || 0}</span>
+            <span className="stat-subtitle">
+              Sân đang hoạt động: {stats.activeFields || 0}
+            </span>
           </div>
         </div>
 
@@ -100,7 +104,9 @@ export default function ManagerDashboardPage() {
           <div className="stat-details">
             <h3>Tổng đơn đặt</h3>
             <p className="stat-number">{stats.totalBookings || 0}</p>
-            <span className="stat-subtitle">Hôm nay: {stats.todayBookings || 0}</span>
+            <span className="stat-subtitle">
+              Hôm nay: {stats.todayBookings || 0}
+            </span>
           </div>
         </div>
 
@@ -119,8 +125,13 @@ export default function ManagerDashboardPage() {
           <div className="stat-icon">💰</div>
           <div className="stat-details">
             <h3>Doanh thu tháng này</h3>
-            <p className="stat-number">{(stats.monthlyRevenue || 0).toLocaleString('vi-VN')} VNĐ</p>
-            <span className="stat-subtitle">Tổng: {(stats.totalRevenue || 0).toLocaleString('vi-VN')} VNĐ (confirmed + completed)</span>
+            <p className="stat-number">
+              {(stats.monthlyRevenue || 0).toLocaleString("vi-VN")} VNĐ
+            </p>
+            <span className="stat-subtitle">
+              Tổng: {(stats.totalRevenue || 0).toLocaleString("vi-VN")} VNĐ
+              (confirmed + completed)
+            </span>
           </div>
         </div>
       </div>
