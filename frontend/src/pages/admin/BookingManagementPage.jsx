@@ -122,37 +122,108 @@ function BookingManagementPage() {
     };
 
     const columns = [
-        { key: 'booking_id', label: 'ID', sortable: true },
+        { 
+            key: 'booking_id', 
+            label: 'ID', 
+            sortable: true,
+            render: (value) => <span style={{ fontWeight: '600', color: '#667eea' }}>#{value}</span>
+        },
         {
             key: 'customer_name',
             label: 'Khách hàng',
-            render: (value) => value || 'N/A'
+            render: (value) => (
+                <span style={{ 
+                    fontWeight: '600', 
+                    color: '#1f2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                }}>
+                    <span style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                    }}>
+                        {value?.charAt(0)?.toUpperCase() || '?'}
+                    </span>
+                    {value || 'N/A'}
+                </span>
+            )
         },
         {
             key: 'field_name',
             label: 'Sân',
-            render: (value) => value || 'N/A'
+            render: (value) => (
+                <span style={{ 
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: '#0369a1'
+                }}>
+                    ⚽ {value || 'N/A'}
+                </span>
+            )
         },
         {
             key: 'start_time',
             label: 'Ngày đặt',
-            render: (value) => value ? new Date(value).toLocaleDateString('vi-VN', { 
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric' 
-            }) : 'N/A'
+            render: (value) => (
+                <span style={{ 
+                    color: '#6b7280', 
+                    fontSize: '13px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                }}>
+                    📅 {value ? new Date(value).toLocaleDateString('vi-VN', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric' 
+                    }) : 'N/A'}
+                </span>
+            )
         },
         {
             key: 'price',
             label: 'Tổng tiền',
-            render: (value) => value ? `${Number(value).toLocaleString()} VNĐ` : '0 VNĐ'
+            className: 'price-cell',
+            render: (value) => (
+                <span style={{
+                    fontWeight: '700',
+                    fontSize: '15px',
+                    color: '#059669',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                }}>
+                    💰 {value ? `${Number(value).toLocaleString()}đ` : '0đ'}
+                </span>
+            )
         },
         {
             key: 'status',
             label: 'Trạng thái',
             render: (value) => {
-                const { bg, color } = getStatusColor(value);
-                return <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500', background: bg, color }}>{getStatusText(value)}</span>;
+                const statusConfig = {
+                    'pending': { className: 'pending', text: '⏳ Chờ xác nhận' },
+                    'confirmed': { className: 'active', text: '✓ Đã xác nhận' },
+                    'cancelled': { className: 'inactive', text: '✕ Đã hủy' },
+                    'completed': { className: 'active', text: '✓ Hoàn thành' }
+                };
+                const config = statusConfig[value] || { className: 'inactive', text: value };
+                return <span className={`status-badge ${config.className}`}>{config.text}</span>;
             }
         }
     ];

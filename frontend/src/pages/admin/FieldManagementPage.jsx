@@ -132,31 +132,108 @@ function FieldManagementPage() {
     };
 
     const columns = [
-        { key: 'field_id', label: 'ID', sortable: true },
-        { key: 'field_name', label: 'Tên sân', sortable: true },
+        { 
+            key: 'field_id', 
+            label: 'ID', 
+            sortable: true,
+            render: (value) => <span style={{ fontWeight: '600', color: '#667eea' }}>#{value}</span>
+        },
+        { 
+            key: 'field_name', 
+            label: 'Tên sân', 
+            sortable: true,
+            render: (value) => <span style={{ fontWeight: '600', color: '#1f2937' }}>{value}</span>
+        },
         { 
             key: 'location', 
             label: 'Địa chỉ', 
             sortable: true,
-            render: (value) => value || 'Chưa cập nhật'
+            render: (value) => (
+                <span style={{ color: '#6b7280', fontSize: '13px' }}>
+                    📍 {value || 'Chưa cập nhật'}
+                </span>
+            )
         },
         {
             key: 'manager_name',
             label: 'Quản lý',
-            render: (value) => value || 'Chưa phân công'
+            render: (value) => (
+                <span style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    padding: '4px 10px',
+                    background: value ? 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)' : '#f3f4f6',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: value ? '#4c1d95' : '#6b7280'
+                }}>
+                    {value ? '👤 ' + value : '⚠️ Chưa phân công'}
+                </span>
+            )
         },
         {
             key: 'status',
             label: 'Trạng thái',
-            render: (value) => <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500', background: value === 'active' ? '#d1fae5' : value === 'maintenance' ? '#fef3c7' : '#f3f4f6', color: value === 'active' ? '#065f46' : value === 'maintenance' ? '#92400e' : '#374151' }}>{value === 'active' ? 'Hoạt động' : value === 'maintenance' ? 'Bảo trì' : 'Không hoạt động'}</span>
+            render: (value) => (
+                <span className={`status-badge ${value === 'active' ? 'active' : value === 'maintenance' ? 'pending' : 'inactive'}`}>
+                    {value === 'active' ? '✓ Hoạt động' : value === 'maintenance' ? '🔧 Bảo trì' : '✕ Không hoạt động'}
+                </span>
+            )
         }
     ];
 
     const actions = (field) => (
         <>
-            <button onClick={() => handleOpenModal('edit', field)} style={{ padding: '6px 12px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>✏️ Sửa</button>
-            <button onClick={() => handleToggleStatus(field)} style={{ padding: '6px 12px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>🔄</button>
-            <button onClick={() => setConfirmDialog({ isOpen: true, field })} style={{ padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>🗑️</button>
+            <button 
+                onClick={() => handleOpenModal('edit', field)} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Chỉnh sửa"
+            >
+                ✏️ Sửa
+            </button>
+            <button 
+                onClick={() => handleToggleStatus(field)} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Đổi trạng thái"
+            >
+                🔄
+            </button>
+            <button 
+                onClick={() => setConfirmDialog({ isOpen: true, field })} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Xóa"
+            >
+                🗑️
+            </button>
         </>
     );
 

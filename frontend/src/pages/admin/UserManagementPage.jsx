@@ -140,27 +140,131 @@ function UserManagementPage() {
     };
 
     const columns = [
-        { key: 'person_id', label: 'ID', sortable: true },
-        { key: 'person_name', label: 'Tên', sortable: true },
-        { key: 'email', label: 'Email', sortable: true },
-        { key: 'phone', label: 'Số điện thoại' },
+        { 
+            key: 'person_id', 
+            label: 'ID', 
+            sortable: true,
+            render: (value) => <span style={{ fontWeight: '600', color: '#667eea' }}>#{value}</span>
+        },
+        { 
+            key: 'person_name', 
+            label: 'Tên', 
+            sortable: true,
+            render: (value) => (
+                <span style={{ 
+                    fontWeight: '600', 
+                    color: '#1f2937',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                }}>
+                    <span style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '14px'
+                    }}>
+                        {value?.charAt(0)?.toUpperCase() || 'U'}
+                    </span>
+                    {value}
+                </span>
+            )
+        },
+        { 
+            key: 'email', 
+            label: 'Email', 
+            sortable: true,
+            render: (value) => (
+                <span style={{ color: '#6b7280', fontSize: '13px' }}>
+                    📧 {value}
+                </span>
+            )
+        },
+        { 
+            key: 'phone', 
+            label: 'Số điện thoại',
+            render: (value) => (
+                <span style={{ color: '#6b7280', fontSize: '13px' }}>
+                    📱 {value || 'Chưa cập nhật'}
+                </span>
+            )
+        },
         {
             key: 'role',
             label: 'Vai trò',
-            render: (value) => <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500', background: value === 'admin' ? '#fee2e2' : value === 'manager' ? '#dbeafe' : '#f3f4f6', color: value === 'admin' ? '#991b1b' : value === 'manager' ? '#1e40af' : '#374151' }}>{value === 'admin' ? 'Admin' : value === 'manager' ? 'Quản lý' : 'Người dùng'}</span>
+            render: (value) => (
+                <span className={`role-badge ${value}`}>
+                    {value === 'admin' ? '👑 Admin' : value === 'manager' ? '🎯 Quản lý' : '👤 Người dùng'}
+                </span>
+            )
         },
         {
             key: 'status',
             label: 'Trạng thái',
-            render: (value) => <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500', background: value === 'active' ? '#d1fae5' : '#f3f4f6', color: value === 'active' ? '#065f46' : '#374151' }}>{value === 'active' ? 'Hoạt động' : 'Không hoạt động'}</span>
+            render: (value) => (
+                <span className={`status-badge ${value === 'active' ? 'active' : 'inactive'}`}>
+                    {value === 'active' ? '✓ Hoạt động' : '✕ Không hoạt động'}
+                </span>
+            )
         }
     ];
 
     const actions = (user) => (
         <>
-            <button onClick={() => handleOpenModal('edit', user)} style={{ padding: '6px 12px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>✏️ Sửa</button>
-            <button onClick={() => handleToggleStatus(user)} style={{ padding: '6px 12px', background: '#f59e0b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>🔄</button>
-            <button onClick={() => setConfirmDialog({ isOpen: true, user })} style={{ padding: '6px 12px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>🗑️</button>
+            <button 
+                onClick={() => handleOpenModal('edit', user)} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Chỉnh sửa"
+            >
+                ✏️ Sửa
+            </button>
+            <button 
+                onClick={() => handleToggleStatus(user)} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Đổi trạng thái"
+            >
+                🔄
+            </button>
+            <button 
+                onClick={() => setConfirmDialog({ isOpen: true, user })} 
+                style={{ 
+                    padding: '8px 14px', 
+                    background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    fontSize: '13px',
+                    fontWeight: '500'
+                }}
+                title="Xóa"
+            >
+                🗑️
+            </button>
         </>
     );
 
