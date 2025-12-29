@@ -193,13 +193,14 @@ export const createBooking = async (req, res) => {
       });
     }
 
-    await sequelize.query(
-      `INSERT INTO bookings (customer_id, field_id, start_time, end_time, price, note, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+    const [rows] = await sequelize.query(
+      `INSERT INTO bookings (customer_id, field_id, start_time, end_time, price, note, status) 
+       VALUES (?, ?, ?, ?, ?, ?, 'pending') 
+       RETURNING *`,
       { replacements: [customer_id, field_id, mysqlStartTime, mysqlEndTime, finalPrice, finalNote] }
     );
 
-  const [rows] = await sequelize.query('SELECT * FROM bookings WHERE booking_id = LAST_INSERT_ID() LIMIT 1');
-  const booking = rows?.[0] ?? null;
+    const booking = rows?.[0] ?? null;
 
     res.status(201).json({ message: 'Booking created', booking });
   } catch (err) {

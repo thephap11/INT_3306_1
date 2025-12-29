@@ -42,7 +42,7 @@ export default function Footer() {
               <li>📍 Công Ty CP DHPoT Booking 24/7</li>
               <li>📞 Liên: @01234XXXX</li>
               <li>✉️ Email: @DHPoTBooking247.com</li>
-              <li>🏢 Địa chỉ: Lô 8-9 khu A1 ĐHQG TP.Dương Quá, Phường Đông Hòa, Thành phố Dĩ An, Tỉnh Bình Dương</li>
+              <li>🏢 Địa chỉ: Số 144, đường Xuân Thủy, phường Cầu Giấy, Hà Nội</li>
             </ul>
           </div>
 

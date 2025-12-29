@@ -160,7 +160,7 @@ export const createBooking = async (req, res) => {
     );
 
     const [rows] = await sequelize.query(
-      "SELECT * FROM bookings WHERE booking_id = LAST_INSERT_ID() LIMIT 1"
+      "SELECT * FROM bookings ORDER BY booking_id DESC LIMIT 1"
     );
     const booking = rows?.[0] ?? null;
 

@@ -42,11 +42,11 @@ export const getAllEmployeesService = async (filters = {}, pagination = {}) => {
       p.address,
       p.fieldId,
       COUNT(f.field_id) as field_count,
-      GROUP_CONCAT(f.field_name SEPARATOR ', ') as field_names
+      STRING_AGG(f.field_name, ', ') as field_names
     FROM person p
     LEFT JOIN fields f ON f.manager_id = p.person_id
     WHERE p.role = 'manager' ${searchCondition} ${statusCondition}
-    GROUP BY p.person_id
+    GROUP BY p.person_id, p.person_name, p.email, p.phone, p.username, p.role, p.status, p.birthday, p.sex, p.address, p.fieldId
     ORDER BY p.person_id DESC
     LIMIT ${parseInt(limit)} OFFSET ${parseInt(offset)}
   `);
