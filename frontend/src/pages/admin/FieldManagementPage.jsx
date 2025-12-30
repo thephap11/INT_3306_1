@@ -239,9 +239,48 @@ function FieldManagementPage() {
 
     return (
         <>
-            <header className="page-header">
-                <h1>Quản Lý Sân Bóng</h1>
-                <button className="btn-primary" onClick={() => handleOpenModal('create')}>+ Thêm Sân Bóng</button>
+            <header className="page-header" style={{ 
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                padding: '30px',
+                borderRadius: '15px',
+                marginBottom: '25px',
+                color: 'white',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                boxShadow: '0 10px 30px rgba(59, 130, 246, 0.3)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{
+                        width: '50px',
+                        height: '50px',
+                        background: 'rgba(255,255,255,0.2)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px'
+                    }}>⚽</div>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>Quản Lý Sân Bóng</h1>
+                </div>
+                <button 
+                    className="btn-primary" 
+                    onClick={() => handleOpenModal('create')}
+                    style={{
+                        background: 'white',
+                        color: '#3b82f6',
+                        padding: '12px 24px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        fontWeight: '600',
+                        fontSize: '15px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >+ Thêm Sân Mới</button>
             </header>
             {stats && (
                 <div className="stats-container">
@@ -259,7 +298,15 @@ function FieldManagementPage() {
                     <option value="maintenance">Bảo trì</option>
                 </select>
             </div>
-            <DataTable columns={columns} data={fields} actions={actions} isLoading={loading} />
+            <DataTable 
+                columns={columns} 
+                data={fields} 
+                actions={actions} 
+                isLoading={loading}
+                emptyImage="/images/admin/empty-fields.svg"
+                emptyTitle="Chưa có sân bóng nào"
+                emptySubtitle="Hãy thêm sân bóng mới để bắt đầu quản lý"
+            />
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={modalMode === 'create' ? 'Thêm sân bóng' : 'Sửa sân bóng'} size="large">
                 <form onSubmit={handleSubmit}>

@@ -330,11 +330,47 @@ function EmployeeManagementPage() {
 
   return (
     <>
-      <header className="page-header">
-        <h1>Quản Lý Nhân Viên</h1>
+      <header className="page-header" style={{ 
+        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+        padding: '30px',
+        borderRadius: '15px',
+        marginBottom: '25px',
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 10px 30px rgba(245, 158, 11, 0.3)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            background: 'rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px'
+          }}>👨‍💼</div>
+          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>Quản Lý Nhân Viên</h1>
+        </div>
         <button
           className="btn-primary"
           onClick={() => handleOpenModal("create")}
+          style={{
+            background: 'white',
+            color: '#f59e0b',
+            padding: '12px 24px',
+            borderRadius: '10px',
+            border: 'none',
+            fontWeight: '600',
+            fontSize: '15px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
         >
           + Thêm Nhân Viên
         </button>
@@ -399,6 +435,9 @@ function EmployeeManagementPage() {
         data={employees}
         actions={actions}
         isLoading={loading}
+        emptyImage="/images/admin/empty-employees.svg"
+        emptyTitle="Chưa có nhân viên nào"
+        emptySubtitle="Hãy thêm nhân viên mới để bắt đầu quản lý"
       />
       <Pagination
         currentPage={currentPage}

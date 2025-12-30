@@ -296,8 +296,30 @@ function BookingManagementPage() {
 
     return (
         <>
-            <header className="page-header">
-                <h1>Quản Lý Đặt Sân</h1>
+            <header className="page-header" style={{ 
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                padding: '30px',
+                borderRadius: '15px',
+                marginBottom: '25px',
+                color: 'white',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                boxShadow: '0 10px 30px rgba(16, 185, 129, 0.3)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{
+                        width: '50px',
+                        height: '50px',
+                        background: 'rgba(255,255,255,0.2)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px'
+                    }}>📋</div>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>Quản Lý Đặt Sân</h1>
+                </div>
             </header>
             {stats && (
                 <div className="stats-container">
@@ -317,7 +339,15 @@ function BookingManagementPage() {
                     <option value="cancelled">Đã hủy</option>
                 </select>
             </div>
-            <DataTable columns={columns} data={bookings} actions={actions} isLoading={loading} />
+            <DataTable 
+                columns={columns} 
+                data={bookings} 
+                actions={actions} 
+                isLoading={loading}
+                emptyImage="/images/admin/empty-bookings.svg"
+                emptyTitle="Chưa có đặt sân nào"
+                emptySubtitle="Hiện tại chưa có đặt sân nào trong hệ thống"
+            />
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
             {selectedBooking && (

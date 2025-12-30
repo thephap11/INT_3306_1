@@ -270,9 +270,48 @@ function UserManagementPage() {
 
     return (
         <>
-            <header className="page-header">
-                <h1>Quản Lý Người Dùng</h1>
-                <button className="btn-primary" onClick={() => handleOpenModal('create')}>+ Thêm Người Dùng</button>
+            <header className="page-header" style={{ 
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                padding: '30px',
+                borderRadius: '15px',
+                marginBottom: '25px',
+                color: 'white',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{
+                        width: '50px',
+                        height: '50px',
+                        background: 'rgba(255,255,255,0.2)',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '24px'
+                    }}>👥</div>
+                    <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>Quản Lý Người Dùng</h1>
+                </div>
+                <button 
+                    className="btn-primary" 
+                    onClick={() => handleOpenModal('create')}
+                    style={{
+                        background: 'white',
+                        color: '#667eea',
+                        padding: '12px 24px',
+                        borderRadius: '10px',
+                        border: 'none',
+                        fontWeight: '600',
+                        fontSize: '15px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                >+ Thêm Người Dùng</button>
             </header>
             {stats && (
                 <div className="stats-container">

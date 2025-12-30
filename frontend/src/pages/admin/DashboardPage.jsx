@@ -89,25 +89,19 @@ function DashboardPage() {
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
           height: "400px",
         }}
       >
-        <div style={{ fontSize: "18px", color: "#6b7280" }}>
-          <div
-            className="spinner"
-            style={{
-              border: "4px solid #f3f4f6",
-              borderTop: "4px solid #3b82f6",
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-              animation: "spin 1s linear infinite",
-              margin: "0 auto 16px",
-            }}
-          ></div>
-          Đang tải dữ liệu...
+        <img 
+          src="/images/admin/loading-animation.svg" 
+          alt="Loading" 
+          style={{ width: '200px', height: '150px', marginBottom: '20px' }}
+        />
+        <div style={{ fontSize: "18px", color: "#6b7280", fontWeight: "500" }}>
+          Đang tải dữ liệu dashboard...
         </div>
       </div>
     );
@@ -141,8 +135,33 @@ function DashboardPage() {
 
   return (
     <>
-      <header className="page-header">
-        <h1>Dashboard - Tổng Quan Hệ Thống</h1>
+      <header 
+        className="page-header"
+        style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          padding: '30px',
+          borderRadius: '15px',
+          marginBottom: '25px',
+          color: 'white',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{
+            width: '50px',
+            height: '50px',
+            background: 'rgba(255,255,255,0.2)',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px'
+          }}>📊</div>
+          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>Dashboard - Tổng Quan Hệ Thống</h1>
+        </div>
       </header>
 
       <div
