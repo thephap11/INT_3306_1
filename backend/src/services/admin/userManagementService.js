@@ -13,7 +13,7 @@ export const getAllUsersService = async (filters = {}, pagination = {}) => {
   let queryParams = [];
   
   if (search) {
-    whereConditions.push('(person_name LIKE ? OR email LIKE ? OR username LIKE ?)');
+    whereConditions.push('(LOWER(person_name) LIKE LOWER(?) OR LOWER(email) LIKE LOWER(?) OR LOWER(username) LIKE LOWER(?))');
     queryParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
   
