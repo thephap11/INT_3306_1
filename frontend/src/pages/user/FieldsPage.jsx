@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Navbar from '../../components/Navbar.jsx'
 import Footer from '../../components/Footer.jsx'
@@ -23,6 +23,8 @@ export default function FieldsPage() {
   const [selectedFacilities, setSelectedFacilities] = useState([]);
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const debounceTimerRef = useRef(null);
 
   const fieldTypes = [
     { id: 'all', name: 'Tất cả sân', icon: '⚽', color: '#3b82f6' },
@@ -50,9 +52,30 @@ export default function FieldsPage() {
     if (maxPrice) setPriceRange([0, parseInt(maxPrice)]);
   }, [searchParams]);
 
-  const fetchFields = async (page = 1) => {
+  // Debounce search term
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm.trim());
+    }, 500);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [searchTerm]);
+
+  const fetchFields = useCallback(async (page = 1, searchQuery = '') => {
     const params = new URLSearchParams();
-    if (searchTerm) params.append('q', searchTerm);
+    // Only append search query if it's not empty after trimming
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery) {
+      params.append('q', trimmedQuery);
+    }
     params.append('limit', '100'); // Fetch more to handle client-side pagination
     params.append('page', '1');
 
@@ -68,11 +91,11 @@ export default function FieldsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchFields(1);
-  }, [searchTerm]);
+    fetchFields(1, debouncedSearchTerm);
+  }, [debouncedSearchTerm, fetchFields]);
 
   // Filter and sort
   useEffect(() => {
@@ -151,7 +174,8 @@ export default function FieldsPage() {
 
   const handleSearch = () => {
     setCurrentPage(1);
-    fetchFields(1);
+    // Immediately update debounced term to trigger search
+    setDebouncedSearchTerm(searchTerm.trim());
   };
 
   const toggleFacility = (facilityId) => {
@@ -204,11 +228,27 @@ export default function FieldsPage() {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Tìm kiếm sân bóng theo tên, địa điểm..."
+                  placeholder="Tìm kiếm sân bóng theo tên, địa điểm... (không phân biệt hoa thường)"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
+                {searchTerm && (
+                  <button 
+                    className="clear-search-btn" 
+                    onClick={() => {
+                      setSearchTerm('');
+                      setDebouncedSearchTerm('');
+                    }}
+                    type="button"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="15" y1="9" x2="9" y2="15"/>
+                      <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  </button>
+                )}
               </div>
               <button className="search-button" onClick={handleSearch}>
                 <span>Tìm kiếm</span>

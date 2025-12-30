@@ -6,14 +6,28 @@ import { getAvailableSlots, checkSlotAvailability } from '../../services/user/sc
 // GET /api/user/fields
 export const listFields = async (req, res) => {
   try {
-    const { q, limit = 50, page = 1 } = req.query;
+    const { q, location, category, limit = 50, page = 1 } = req.query;
     const offset = (page - 1) * limit;
 
     const where = { status: 'active' };
-    if (q) {
+    
+    // Handle search query - support both 'q' and 'location' parameters
+    const searchTerm = (q || location || '').trim();
+    
+    if (searchTerm) {
+      // Case-insensitive search using LOWER() function
+      // This handles Vietnamese characters with diacritics correctly
       where[Op.or] = [
-        { field_name: { [Op.like]: `%${q}%` } },
-        { location: { [Op.like]: `%${q}%` } }
+        sequelize.where(
+          sequelize.fn('LOWER', sequelize.col('field_name')),
+          'LIKE',
+          `%${searchTerm.toLowerCase()}%`
+        ),
+        sequelize.where(
+          sequelize.fn('LOWER', sequelize.col('location')),
+          'LIKE',
+          `%${searchTerm.toLowerCase()}%`
+        )
       ];
     }
 

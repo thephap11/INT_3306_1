@@ -152,7 +152,7 @@
 
 .search-input-wrapper input {
   width: 100%;
-  padding: 16px 16px 16px 48px;
+  padding: 16px 48px 16px 48px;
   border: none;
   border-radius: 12px;
   font-size: 16px;
@@ -163,6 +163,36 @@
 
 .search-input-wrapper input::placeholder {
   color: #94a3b8;
+  font-size: 15px;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(100, 116, 139, 0.1);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #64748b;
+}
+
+.clear-search-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.clear-search-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
 }
 
 .search-button {
